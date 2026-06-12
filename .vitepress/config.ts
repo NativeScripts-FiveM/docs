@@ -71,9 +71,7 @@ export default defineConfig({
       {
         text: '⚙️ Core',
         collapsed: false,
-        items: [
-          { text: '🧰 ns-utils', link: '/scripts/fivem/ns-utils' },
-        ],
+        items: [],
       },
       // No "FiveM Resources" group header — scripts listed flat below Core.
       { text: '🎬 ns-loadingscreen', link: '/scripts/fivem/ns-loadingscreen-fivem' },
