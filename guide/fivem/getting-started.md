@@ -51,5 +51,4 @@ You never branch on the framework name — all of that lives inside `utils/`.
 
 ## Next
 
-- [ns-utils →](/scripts/fivem/ns-utils) — the full `Utils.*` API reference
 - [Scripts →](/scripts/fivem/ns-loadingscreen-fivem) — documentation for each FiveM script

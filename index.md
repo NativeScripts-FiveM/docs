@@ -20,15 +20,9 @@ ensure ns-loadingscreen
 
 That's it — `ns-utils` is bundled inside each resource, so there's nothing extra to install. Optional: `ox_lib` (nicer notifications) and `oxmysql` (for scripts that use a database).
 
-For how the `Utils.*` layer works, open the [ns-utils](/scripts/fivem/ns-utils) page in the sidebar.
+The `Utils.*` layer is explained in [How it works](#how-it-works) below.
 
 ## Scripts
-
-### Core
-
-- **[ns-utils](/scripts/fivem/ns-utils)** — Framework-agnostic `Utils.*` layer. One unified API for ESX/QBCore/Qbox/standalone. Money, inventory (ox/qb/qs/codem/ps/esx/gfx), target, skin, notify, callbacks, SQL, lifecycle, Discord/Steam avatars.
-
-### Resources
 
 - **[ns-loadingscreen](/scripts/fivem/ns-loadingscreen-fivem)** — Themed loading screen with rotating backgrounds, in-screen music player, server rules panel and rotating tips.
 

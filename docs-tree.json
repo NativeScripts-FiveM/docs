@@ -1,7 +1,6 @@
 {
   "files": [
     "guide/fivem/getting-started.md",
-    "scripts/fivem/ns-loadingscreen-fivem.md",
-    "scripts/fivem/ns-utils.md"
+    "scripts/fivem/ns-loadingscreen-fivem.md"
   ]
 }
