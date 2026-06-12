@@ -1,33 +1,33 @@
 # ns-utils
 
-FiveM Lua resource'lar için **framework-agnostic `Utils.*` katmanı**.
-ESX, QBCore, Qbox (qbx_core) ve standalone — hepsi tek API ile.
+A **framework-agnostic `Utils.*` layer** for FiveM Lua resources.
+ESX, QBCore, Qbox (qbx_core) and standalone — all behind one API.
 
-> Her resource'a kopyala, framework branş'ını unut, `Utils.*` üzerinden yaz.
+> Copy it into each resource, forget framework branching, write against `Utils.*`.
 
 ---
 
-## İçindekiler
+## Contents
 
-- [Neden?](#neden)
-- [Kurulum](#kurulum)
-- [fxmanifest entegrasyonu](#fxmanifest-entegrasyonu)
-- [Otomatik tespit](#otomatik-tespit)
+- [Why?](#why)
+- [Installation](#installation)
+- [fxmanifest integration](#fxmanifest-integration)
+- [Auto-detection](#auto-detection)
 - [API — shared.lua](#api--sharedlua)
 - [API — client.lua](#api--clientlua)
 - [API — server.lua](#api--serverlua)
-- [Config override'ları](#config-overrideları)
-- [Örnekler](#örnekler)
-- [Yapılmazlar](#yapılmazlar)
+- [Config overrides](#config-overrides)
+- [Examples](#examples)
+- [Don'ts](#donts)
 
 ---
 
-## Neden?
+## Why?
 
-Aynı scripti ESX, QB ve QBX için ayrı ayrı yazmak yerine **tek bir kod tabanı** ile üçünü de desteklemek.
+Instead of writing the same script three separate times for ESX, QB and QBX, support all three from **a single codebase**.
 
 ```lua
--- ❌ Eski yaklaşım
+-- ❌ Old way
 if FW == 'esx' then
     ESX.GetPlayerFromId(src).addMoney(100)
 elseif FW == 'qb' then
@@ -36,17 +36,17 @@ elseif FW == 'qbx' then
     exports.qbx_core:AddMoney(src, 'cash', 100)
 end
 
--- ✅ template-utils ile
+-- ✅ with ns-utils
 Utils.AddMoney(src, 'cash', 100)
 ```
 
-Script gövdesinde framework adı geçmez. Tüm branş `utils/` içinde kalır.
+The framework name never appears in your script body. All branching stays inside `utils/`.
 
 ---
 
-## Kurulum
+## Installation
 
-1. `utils/` klasörünü olduğu gibi yeni veya mevcut resource'a kopyala:
+1. Copy the `utils/` folder as-is into a new or existing resource:
 
 ```
 your-resource/
@@ -54,20 +54,20 @@ your-resource/
 ├── config.lua
 ├── client/
 ├── server/
-└── utils/             ← buraya kopyala
+└── utils/             ← copy here
     ├── shared.lua
     ├── client.lua
     └── server.lua
 ```
 
-2. [fxmanifest.lua](#fxmanifest-entegrasyonu) yükleme sırasını ayarla.
-3. Script gövdesinde sadece `Utils.X` çağır.
+2. Set up the load order in [fxmanifest.lua](#fxmanifest-integration).
+3. In your script body, only ever call `Utils.X`.
 
 ---
 
-## fxmanifest entegrasyonu
+## fxmanifest integration
 
-`shared.lua` **ilk** yüklenmek zorunda — `Utils.Framework`, `Utils.Inventory` vb. tespit burada yapılır.
+`shared.lua` MUST load **first** — `Utils.Framework`, `Utils.Inventory` etc. are detected there.
 
 ```lua
 fx_version 'cerulean'
@@ -75,42 +75,42 @@ game 'gta5'
 lua54 'yes'
 
 shared_scripts {
-    'utils/shared.lua',     -- 1️⃣ önce — Utils tablosunu kurar
-    'config.lua',           -- 2️⃣ sonra — Config kullanılabilir
-    -- 'utils/locale.lua',  -- (opsiyonel) _U gibi locale fonksiyonu varsa burada
+    'utils/shared.lua',     -- 1️⃣ first — sets up the Utils table
+    'config.lua',           -- 2️⃣ then — Config becomes available
+    -- 'utils/locale.lua',  -- (optional) put a locale fn like _U here if you have one
 }
 
 client_scripts {
     'utils/client.lua',     -- 3️⃣ Utils client extension
-    'client/*.lua',         -- 4️⃣ script kodu
+    'client/*.lua',         -- 4️⃣ your script code
 }
 
 server_scripts {
-    '@oxmysql/lib/MySQL.lua',  -- (opsiyonel) oxmysql kullanılacaksa
+    '@oxmysql/lib/MySQL.lua',  -- (optional) if you use oxmysql
     'utils/server.lua',        -- 5️⃣ Utils server extension
-    'server/*.lua',            -- 6️⃣ script kodu
+    'server/*.lua',            -- 6️⃣ your script code
 }
 
--- Framework HİÇBİRİ zorunlu dependency değil — runtime'da tespit ediliyor.
--- oxmysql kullanıyorsan:
+-- NO framework is a hard dependency — they are detected at runtime.
+-- If you use oxmysql:
 dependency 'oxmysql'
 ```
 
-`fxmanifest.example.lua` repo'da bu yapının daha geniş bir kopyası.
+`fxmanifest.example.lua` in the repo is a fuller copy of this layout.
 
 ---
 
-## Otomatik tespit
+## Auto-detection
 
-`shared.lua` başlatıldığında server console'a şunu basar:
+When `shared.lua` initializes it prints this to the server console:
 
 ```
-[your-resource][INFO] shared.lua hazır (framework=qbx, inv=ox_inventory, target=ox_target, skin=illenium-appearance, sql=oxmysql)
+[your-resource][INFO] shared.lua ready (framework=qbx, inv=ox_inventory, target=ox_target, skin=illenium-appearance, sql=oxmysql)
 ```
 
-Tespit önceliği:
+Detection priority:
 
-| Kategori | Öncelik (önden arkaya) |
+| Category | Priority (first match wins) |
 |---|---|
 | **Framework** | `qbx_core` → `qb-core` → `es_extended` → `standalone` |
 | **Inventory** | `ox_inventory` → `qb-inventory` → `qs-inventory` → `codem-inventory` → `ps-inventory` → `esx_inventoryhud` → `gfx-inventory` |
@@ -118,17 +118,17 @@ Tespit önceliği:
 | **Skin** | `illenium-appearance` → `fivem-appearance` → `qb-clothing` → `esx_skin` → `skinchanger` |
 | **SQL** | `oxmysql` → `ghmattimysql` → `mysql-async` |
 
-Hiçbiri yoksa o kategori `nil` kalır — ilgili API çağrıları sessizce no-op döner.
+If none are present, that category stays `nil` — the related API calls silently no-op.
 
 ---
 
 ## API — shared.lua
 
-Hem client hem server'da çalışan helper'lar.
+Helpers that run on both client and server.
 
-### Tespit değerleri
+### Detection values
 
-| Property | Tip | Örnek |
+| Property | Type | Example |
 |---|---|---|
 | `Utils.Framework` | string | `'esx'`, `'qb'`, `'qbx'`, `'standalone'` |
 | `Utils.Inventory` | string?| `'ox_inventory'` |
@@ -141,28 +141,28 @@ Hem client hem server'da çalışan helper'lar.
 ### Logger
 
 ```lua
-Utils.Info('Bootstrap tamam: %d job yüklendi', count)
-Utils.Warn('Config eksik: %s', key)
-Utils.Error('SQL hatası: %s', err)
-Utils.Debug('Player data: %s', json.encode(pd))  -- yalnızca Config.Debug = true ise basar
+Utils.Info('Bootstrap done: %d jobs loaded', count)
+Utils.Warn('Missing config: %s', key)
+Utils.Error('SQL error: %s', err)
+Utils.Debug('Player data: %s', json.encode(pd))  -- only prints if Config.Debug = true
 ```
 
 ### Vector
 
 ```lua
-Utils.Dist3D(a, b)               -- vector3 mesafe
-Utils.Dist2D(a, b)               -- z'yi yoksay
-Utils.LerpVector(from, to, t)    -- lineer interpolation
+Utils.Dist3D(a, b)               -- vector3 distance
+Utils.Dist2D(a, b)               -- ignore z
+Utils.LerpVector(from, to, t)    -- linear interpolation
 ```
 
 ### Table
 
 ```lua
-Utils.DeepCopy(t)                 -- recursive cycle-safe kopya
+Utils.DeepCopy(t)                 -- recursive cycle-safe copy
 Utils.TableContains(t, value)     -- linear search
-Utils.TableSize(t)                -- hash table dahil eleman sayısı
-Utils.TableIntersect(a, b)        -- iki ipairs liste kesişimi
-Utils.PickRandom(t)               -- random ipairs eleman
+Utils.TableSize(t)                -- element count, hash tables included
+Utils.TableIntersect(a, b)        -- intersection of two ipairs lists
+Utils.PickRandom(t)               -- random ipairs element
 Utils.SortedPairs(t, order?)      -- sorted iterator
 ```
 
@@ -176,7 +176,7 @@ Utils.RandomPlate(8)              -- 'ABCDEFGH'
 ### JSON
 
 ```lua
-Utils.JSON.encode(obj)            -- FiveM yerleşik json wrapper
+Utils.JSON.encode(obj)            -- FiveM built-in json wrapper
 Utils.JSON.decode(str)
 ```
 
@@ -187,10 +187,10 @@ Utils.JSON.decode(str)
 ### Player
 
 ```lua
-Utils.GetPlayerData()        -- framework'e göre PlayerData tablosu
+Utils.GetPlayerData()        -- PlayerData table per framework
 Utils.GetIdentifier()        -- ESX: identifier / QB,QBX: citizenid
-Utils.IsPlayerLoaded()       -- player tam yüklü mü
-Utils.WaitForCore()          -- framework Core hazır olana kadar bekle
+Utils.IsPlayerLoaded()       -- whether the player is fully loaded
+Utils.WaitForCore()          -- wait until the framework Core is ready
 ```
 
 ### Lifecycle
@@ -204,21 +204,21 @@ end)
 ### Notify
 
 ```lua
-Utils.Notify('Görev başladı', 'success')
-Utils.Notify('Hata!', 'error', 'Trucker')   -- 3. arg: title (varsayılan resource adı)
+Utils.Notify('Job started', 'success')
+Utils.Notify('Error!', 'error', 'Trucker')   -- 3rd arg: title (defaults to resource name)
 ```
 
-Öncelik: `Config.Notify` override → `ox_lib` → framework default → native feed.
+Priority: `Config.Notify` override → `ox_lib` → framework default → native feed.
 
 ### Callback (client → server)
 
 ```lua
--- callback (cb tabanlı)
+-- callback (cb-based)
 Utils.TriggerCallback('get_balance', function(balance)
-    print('Para:', balance)
+    print('Money:', balance)
 end, 'bank')
 
--- await (sync tabanlı)
+-- await (sync-based)
 local balance = Utils.AwaitCallback('get_balance', 'bank')
 ```
 
@@ -226,7 +226,7 @@ local balance = Utils.AwaitCallback('get_balance', 'bank')
 
 ```lua
 Utils.SendReactMessage('action_name', { foo = 1 })
-Utils.DebugPrint('foo', 'bar')   -- yalnızca convar `<resource>-debugMode 1` ise
+Utils.DebugPrint('foo', 'bar')   -- only when convar `<resource>-debugMode 1` is set
 ```
 
 ### World
@@ -237,7 +237,7 @@ Utils.GetClosestVehicle(coords?, maxDist?)    -- returns vehicle, distance
 Utils.GetClosestPlayer(coords?, maxDist?)     -- returns playerId, distance
 ```
 
-### Loaders (timeout'lu)
+### Loaders (with timeout)
 
 ```lua
 Utils.LoadAnimDict('amb@world_human_smoking@male@male_a@base', 5000)
@@ -266,7 +266,7 @@ Utils.DrawText2D(0.5, 0.5, 'Center text')
 Utils.AddTargetEntity(entity, {
     {
         name     = 'open_menu',
-        label    = 'Menüyü Aç',
+        label    = 'Open menu',
         icon     = 'fa-solid fa-list',
         event    = 'myresource:openMenu',
         action   = function(entity) print('clicked') end,
@@ -310,7 +310,7 @@ Utils.RemoveMoney(src, 'bank', 200)
 Utils.HasMoney(src, 100, 'bank')
 ```
 
-### Inventory (her sistem aynı imza)
+### Inventory (same signature for every system)
 
 ```lua
 Utils.AddItem(src, 'water', 1, metadata?, slot?)
@@ -325,8 +325,8 @@ Utils.RegisterUsableItem('water', function(src) ... end)
 ### Notify (server → client)
 
 ```lua
-Utils.Notify(src, 'Para hesabına yatırıldı.', 'success')
-Utils.Notify(src, 'Bu eşyaya sahip değilsin.', 'error', 'Inventory')
+Utils.Notify(src, 'Money deposited to your account.', 'success')
+Utils.Notify(src, 'You do not have this item.', 'error', 'Inventory')
 ```
 
 ### Callback (request handler)
@@ -350,10 +350,10 @@ if Utils.HasPermission(src, 'admin') then ... end
 Utils.RegisterCommand('giveweapon', function(src, args)
     -- ...
 end, true, {  -- restricted (admin) + chat suggestion
-    help   = 'Oyuncuya silah ver',
+    help   = 'Give a weapon to a player',
     params = {
         { name = 'id',     help = 'Server ID' },
-        { name = 'weapon', help = 'Silah adı' },
+        { name = 'weapon', help = 'Weapon name' },
     },
 })
 ```
@@ -370,7 +370,7 @@ end)
 local rows = Utils.ExecuteSql('SELECT * FROM users WHERE identifier = ?', { id })
 ```
 
-> `oxmysql` kullanıyorsan `MySQL.query.await(...)` doğrudan da kullanılabilir — fxmanifest'te `@oxmysql/lib/MySQL.lua` yüklü.
+> If you use `oxmysql` you can also call `MySQL.query.await(...)` directly — `@oxmysql/lib/MySQL.lua` is loaded in the fxmanifest.
 
 ### Lifecycle
 
@@ -380,33 +380,33 @@ Utils.OnPlayerLoaded(function(src)
 end)
 
 Utils.OnPlayerDropped(function(src, identifier)
-    -- identifier disconnect anında alındı, kullanmak güvenli
+    -- identifier captured at disconnect time, safe to use
 end)
 ```
 
 ### Avatar (Discord / Steam)
 
 ```lua
-local url = Utils.GetDiscordAvatar(src)   -- Config.DiscordBotToken zorunlu
+local url = Utils.GetDiscordAvatar(src)   -- requires Config.DiscordBotToken
 local url = Utils.GetSteamAvatar(src)     -- public Steam profile lookup
 ```
 
 ---
 
-## Config override'ları
+## Config overrides
 
-`Config` tablonda aşağıdaki anahtarlar varsa template otomatik kullanır.
+If your `Config` table has the following keys, the template uses them automatically.
 
 ```lua
 Config = {}
 
--- Debug log'larını aç
+-- Enable debug logs
 Config.Debug = true
 
 -- Discord avatar API
 Config.DiscordBotToken = 'xxxxxx'
 
--- Notify'ı override et (hem client hem server için)
+-- Override Notify (for both client and server)
 Config.Notify = function(targetOrMessage, message, ntype, title)
     -- client: function(message, ntype, title)
     -- server: function(source, message, ntype, title)
@@ -415,9 +415,9 @@ end
 
 ---
 
-## Örnekler
+## Examples
 
-### Basit job kabul callback
+### Simple job-accept callback
 
 ```lua
 -- server/jobs.lua
@@ -427,11 +427,11 @@ Utils.RegisterCallback('accept_job', function(src, jobId)
 
     local job = Jobs[jobId]
     if not job then
-        Utils.Notify(src, 'Bu iş artık mevcut değil.', 'error')
+        Utils.Notify(src, 'This job is no longer available.', 'error')
         return false
     end
 
-    Utils.Notify(src, ('İş kabul edildi: %s'):format(job.label), 'success')
+    Utils.Notify(src, ('Job accepted: %s'):format(job.label), 'success')
     return true
 end)
 ```
@@ -444,20 +444,20 @@ if ok then
 end
 ```
 
-### Inventory + para ödemesi
+### Inventory + money payout
 
 ```lua
 Utils.RegisterCommand('sell_water', function(src)
     if not Utils.HasItem(src, 'water', 1) then
-        return Utils.Notify(src, 'Suyun yok.', 'error')
+        return Utils.Notify(src, 'You have no water.', 'error')
     end
     Utils.RemoveItem(src, 'water', 1)
     Utils.AddMoney(src, 'cash', 10, 'water_sale')
-    Utils.Notify(src, '+$10 (su satıldı)', 'success')
+    Utils.Notify(src, '+$10 (water sold)', 'success')
 end)
 ```
 
-### Lifecycle ile auto-save
+### Auto-save on lifecycle
 
 ```lua
 Utils.OnPlayerDropped(function(src, identifier)
@@ -475,19 +475,19 @@ end)
 
 ---
 
-## Yapılmazlar
+## Don'ts
 
-- Script gövdesinde `if Utils.Framework == 'esx' then ...` dağıtma — tüm branş `utils/` içinde kalsın, dışarı çıkarsa template'in amacı kalmaz.
-- `Core.X` / `QBCore.X` / `ESX.X` doğrudan çağırma — sadece `Utils.X`.
-- `shared.lua`'yı **son** yükleme — diğer dosyalar `Utils.*` aramada `nil` hatası alır.
-- `oxmysql` haricinde bir SQL kullanıyorsan `Utils.ExecuteSql` fallback'ı var ama oxmysql öneriliyor.
-- ox_lib varsa otomatik notify'da kullanılır — istemiyorsan `Config.Notify` override et.
+- Don't scatter `if Utils.Framework == 'esx' then ...` across your script body — keep all branching inside `utils/`, otherwise the whole point of the layer is lost.
+- Don't call `Core.X` / `QBCore.X` / `ESX.X` directly — only `Utils.X`.
+- Don't load `shared.lua` **last** — the other files will hit `nil` errors looking up `Utils.*`.
+- If you use a SQL resource other than `oxmysql`, `Utils.ExecuteSql` has fallbacks, but oxmysql is recommended.
+- If ox_lib is present it's used automatically for notifications — override `Config.Notify` if you don't want that.
 
 ---
 
-## Lisans
+## License
 
-MIT — kullan, fork'la, değiştir, ne yaparsan yap.
+MIT — use it, fork it, change it, do whatever.
 
 ---
 

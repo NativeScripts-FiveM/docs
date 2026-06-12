@@ -67,21 +67,10 @@ export default defineConfig({
 
     nav: [],
 
+    // Flat list — no category headers, just script names.
     sidebar: [
-      {
-        text: '⚙️ Core',
-        collapsed: false,
-        items: [
-          { text: '🧰 ns-utils', link: '/scripts/fivem/ns-utils' },
-        ],
-      },
-      {
-        text: '🚓 FiveM Resources',
-        collapsed: false,
-        items: [
-          { text: '🎬 ns-loadingscreen', link: '/scripts/fivem/ns-loadingscreen-fivem' },
-        ],
-      },
+      { text: 'ns-utils', link: '/scripts/fivem/ns-utils' },
+      { text: 'ns-loadingscreen', link: '/scripts/fivem/ns-loadingscreen-fivem' },
     ],
 
     socialLinks: [
