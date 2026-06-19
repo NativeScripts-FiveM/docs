@@ -22,6 +22,7 @@ export default defineConfig({
     /^\.\/html\//,
     /^html\/README/,
     /^\.\/utils\//,
+    /^\.\/install\//,
   ],
 
   head: [
