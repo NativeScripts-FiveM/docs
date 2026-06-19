@@ -43,8 +43,8 @@ into the resource — no shared dependency).
 - 4 built-in presets — **Wanted Poster**, **Newspaper Page**, **Classified Ad**,
   **Custom (blank canvas)**.
 - Drag / resize / rotate text and image elements on a 600×800 (3:4) canvas.
-- 4 fonts shipped: Rye (western), IM Fell English (serif), Inter (sans),
-  Special Elite (typewriter).
+- 4 fonts shipped: Oswald (condensed display), Inter (sans), IM Fell English
+  (serif), Special Elite (typewriter).
 - 8 image filters: None, Sepia, Wanted, Noir, B&W, Vintage, Faded, Cold.
 - Image sources: built-in asset library, whitelisted-domain URLs, and (optional)
   local upload.
