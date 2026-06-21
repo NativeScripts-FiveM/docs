@@ -63,10 +63,10 @@ into the resource — no shared dependency).
 - Distance-streamed: only posters within `Config.Dui.RenderDistance` render, and
   at most `Config.Dui.MaxConcurrent` at once (nearest first). The rest show the
   plain board.
-- A custom flat board prop (`ns_poster`) is streamed with the resource and used
-  by default; any flat-fronted prop works (see **Props & the design** below).
-- Set `Config.Dui.Poly.Enabled = false` to fall back to a camera-facing billboard
-  sprite, or `Config.Dui.Enabled = false` to show the bare prop only.
+- A custom flat board prop (`ns_poster`) is streamed with the resource. The prop
+  and the design-size/geometry are fixed (tuned in `client/dui.lua`) so the flat
+  alignment is always correct — nothing to configure.
+- Set `Config.Dui.Enabled = false` to show the bare prop only (no design render).
 
 ### Placement
 - Uses [object_gizmo](https://github.com/DemiAutomatic/object_gizmo) for full 3D
@@ -190,9 +190,6 @@ disable it:
 5. (Optional) populate `Config.AllowedImageDomains` to allow image URLs, and/or
    configure `Config.Upload` to allow local image upload.
 
-6. Tune `Config.AllowedProps` + `Config.PropFaces` so the rendered design sits
-   flush on each prop's front face (see **Props & the design quad** below).
-
 ---
 
 ## Commands & keys
@@ -218,42 +215,14 @@ disable it:
 
 ## Props & the design
 
-By default the design is drawn as a **flat world-space quad on the prop face**.
-A custom flat 3:4 board prop, `ns_poster`, ships in `stream/` and is the default
-(`Config.DefaultProp`). Any flat-fronted prop works — add it to
-`Config.AllowedProps` and give it a `Config.PropFaces` entry.
+Posters use a single custom flat 3:4 board prop, `ns_poster`, streamed with the
+resource (`stream/`). The design is drawn as a flat world-space quad
+(`DrawSpritePoly`) on the prop face, so it renders identically on a cold join and
+a warm restart and reads correctly from both sides.
 
-Size per prop in `Config.PropFaces` (metres, also sets the aspect ratio):
-
-```lua
-Config.PropFaces = {
-    ['ns_poster']                    = { w = 0.350, h = 0.450, up = 0.0 },
-    ['sum_prop_ac_qub3d_poster_01a'] = { w = 0.45,  h = 0.9,   up = 0.3 },
-}
-Config.PropFaceDefault = { w = 1.0, h = 1.35, up = 0.0 }
-```
-
-The quad itself is tuned in `Config.Dui.Poly`:
-
-```lua
-Config.Dui.Poly = {
-    Enabled     = true,    -- false → camera-facing billboard sprite instead
-    Forward     = 0.020,   -- metres in front of the prop face (avoids z-fighting)
-    Up          = 0.185,   -- lift the quad centre to sit on the board
-    DoubleSided = true,    -- readable on both faces of the board
-    FlipSide    = false,   -- which physical side the design faces
-    FlipU       = true,    -- mirror horizontally so the text reads correctly
-}
-```
-
-- `PropFaces[*].w/h` — poster face size; `up` — extra height on top of
-  `Config.Dui.HeightOffset`.
-- The billboard fallback (`Poly.Enabled = false`) instead uses
-  `Config.Dui.SpriteScale` for apparent size.
-
-Shipped `Config.AllowedProps`: `ns_poster` (the custom flat board, default),
-`sum_prop_ac_qub3d_poster_01a` (base-game wall poster) and `prop_news_disp_02a`
-(newspaper stand). Props not listed use `Config.PropFaceDefault`.
+The prop model, the design size on its face, and the quad geometry are all fixed
+and tuned in `client/dui.lua` — there's nothing to configure here, and the flat
+alignment is always correct.
 
 ---
 
@@ -263,9 +232,10 @@ All settings live in [`config.lua`](config.lua). Key blocks:
 
 - **Storage** — `UseMySQL`, `AutoSaveInterval`.
 - **Streaming + limits** — distances, ticks, per-player caps.
-- **Placement** — `AllowedProps`, `PropFaces`, anti-teleport clamp.
-- **Dui** — `Enabled`, `RenderDistance`, `MaxConcurrent`, texture resolution.
+- **Placement** — anti-teleport clamp (placement distances).
+- **Dui** — `Enabled` (in-world design on/off), `RenderDistance`, `MaxConcurrent`.
 - **Categories** — keys, labels, blip sprite + colour.
+- **Blips** — `UseBlips` (map blips on/off), `BlipName`, `BlipScale`.
 - **Economy** — costs, account, overrides, refund.
 - **Interaction** — `target` / `key`, distance, key control.
 - **Permissions** — `PlaceJobs`, `CategoryJobs`, `TakedownJobs`, zones.
