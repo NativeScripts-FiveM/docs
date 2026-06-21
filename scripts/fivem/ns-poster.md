@@ -44,8 +44,9 @@ into the resource — no shared dependency).
   **Wanted (LSPD)**, **Club Night**, **For Sale**, **Magazine Cover**,
   **uwu Cafe**, **Now Hiring**, **Lost Pet**, **For Rent**.
 - Drag / resize / rotate text and image elements on a 600×800 (3:4) canvas.
-- 4 fonts shipped: Oswald (condensed display), Inter (sans), IM Fell English
-  (serif), Special Elite (typewriter).
+- 8 fonts shipped: Oswald, Bebas Neue, Anton (display), Inter (sans),
+  IM Fell English, Playfair Display (serif), Special Elite (typewriter),
+  Pacifico (script).
 - 8 image filters: None, Sepia, Grunge, Noir, B&W, Vintage, Faded, Cold.
 - Image sources: built-in asset library, whitelisted-domain URLs, and (optional)
   local upload.
