@@ -23,6 +23,8 @@ export default defineConfig({
     /^html\/README/,
     /^\.\/utils\//,
     /^\.\/install\//,
+    // Repo-relative source links in synced READMEs (e.g. client/main.lua).
+    /^(client|server|shared)\//,
   ],
 
   head: [
@@ -75,6 +77,7 @@ export default defineConfig({
         items: [],
       },
       // No "FiveM Resources" group header — scripts listed flat below Core.
+      { text: '🛡️ ns-admin', link: '/scripts/fivem/ns-admin' },
       { text: '🎬 ns-loadingscreen', link: '/scripts/fivem/ns-loadingscreen-fivem' },
       { text: '🖼️ ns-poster', link: '/scripts/fivem/ns-poster' },
     ],
