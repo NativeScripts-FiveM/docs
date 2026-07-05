@@ -1,9 +1,9 @@
-# Watch Screen (ns-admin)
+# ns-admin
 
-A standalone FiveM admin suite built around **live player spectate over WebRTC**. Open an
-in-game panel, search the player list, watch any player's screen peer-to-peer (ultra-low
-latency, media never touches the server), and run a full set of moderation and developer
-tools — all framework-optional.
+A standalone FiveM **admin menu** — moderation, developer tools, a ticket system, and
+**live player spectate over WebRTC** (a feature called *Watch Screen*), all in one in-game
+panel. Open the menu, search the player list, act on any player, and watch their screen
+peer-to-peer (ultra-low latency, media never touches the server) — all framework-optional.
 
 **Standalone**: no framework dependency, no `screenshot-basic`, no external services. Drop it
 in and grant your admins an ACE. Optional framework features (money / job / inventory) light up
