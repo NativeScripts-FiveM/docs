@@ -53,11 +53,7 @@ The resource is **self-contained** — the podium, crown, sign and animation str
 
 **1. Drop the resource** into your server, e.g. `resources/[ns]/ns-leaderboard/`. Keep the folder name **`ns-leaderboard`**.
 
-**2. Import the database** (one time — the table then auto-migrates new columns on every future update, so you never run SQL again):
-```bash
-mysql -u user -p yourdatabase < sql/install.sql
-```
-Or just paste `sql/install.sql` into HeidiSQL / phpMyAdmin and run it.
+**2. Import the database** (one time). Open your database with the tool you already use — **HeidiSQL**, **phpMyAdmin**, or your hosting panel's **"Databases → SQL / Import"** tab — then open the **`sql/install.sql`** file (it's inside this resource) and click **Run / Go / Execute**. That's all. The table updates itself on future versions, so you never touch SQL again.
 
 **3. Add to `server.cfg`** — order matters (oxmysql, then your framework if any, then this):
 ```cfg
