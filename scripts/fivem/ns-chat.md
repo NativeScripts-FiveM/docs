@@ -69,7 +69,6 @@ Switch channels with `Tab` or the tab bar — there is no per-channel send comma
 
 | Command | Description |
 |---|---|
-| `/squad <id>` · `/crew <id>` | Join a squad / crew (`off` to leave) |
 | `/w` · `/dm <id> <msg>` | Private message a player |
 | `/r <msg>` | Reply to the last player who messaged you |
 | `/ignore <id>` · `/unignore <id>` | Mute / unmute a player locally |
@@ -85,25 +84,26 @@ in autocomplete only for staff.
 
 ## Squad & crew
 
-ns-chat is a chat, not a gang or party system — so squad/crew membership can
-come from whatever your server already runs. Each group has a `resolve` setting
-in `config.lua` (`Config.Groups`):
+ns-chat is a chat, not a gang or party system — squad/crew membership is owned
+by whatever your server already runs. There is **no built-in join command**;
+membership is read through a `resolve` setting in `config.lua` (`Config.Groups`)
+or pushed in from your own resource via the `setSquad` / `setCrew` exports.
 
 | `resolve` | Membership comes from |
 |---|---|
-| `nil` / `false` | **Built-in** — two players are in one group by typing `/squad <id>` (or `/crew <id>`) with the same id. Works standalone. `off` to leave. |
-| `'auto'` | The **framework gang** (QBCore / Qbox) or **ox_core** gang automatically; falls back to the built-in command where there are no gangs (ESX / standalone). |
+| `'auto'` | The **framework gang** (QBCore / Qbox) or **ox_core** gang automatically. |
 | `'gang'` | Framework gang name (qb / qbx `PlayerData.gang`). |
 | `'ox_core'` | ox_core gang (a group of type `gang`). |
 | `'job'` | Framework job name (esx / qb / qbx). |
 | `'statebag'` | A party statebag — `Player(src).state[stateKey]` (set `stateKey`, default `party`). Most PvP party scripts store the party here. |
 | `function(src)` | **Your own source** — return the player's group id from any resource. |
+| `nil` / `false` | No resolver: membership comes only from the `setSquad` / `setCrew` exports below. |
 
 Verified against `qb-core` / `qbx_core` / `ox_core` / `es_extended` source, and
 the framework "empty" values (`none`, `unemployed`) count as no group.
 
-Defaults: **squad** is built-in (a temporary party), **crew** is `'auto'` (your
-gang system if you have one). Point either at a custom resource or a party
+Defaults: **crew** is `'auto'` (your gang system), **squad** has no resolver (wire
+it to your party/lobby script). Point either at a custom resource or a party
 statebag like this:
 
 ```lua
@@ -117,9 +117,8 @@ Config.Groups.squad.resolve  = 'statebag'
 Config.Groups.squad.stateKey = 'lobbyId'
 ```
 
-When `resolve` is set, the manual `/<cmd> <id>` join is disabled (that system
-owns membership) and everyone it maps to the same id is one squad/crew. You can
-also push membership from another resource via the exports below.
+Everyone a source maps to the same id is one squad/crew. You can also push
+membership from another resource via the exports below.
 
 **Crew tag.** The badge before a name can show your crew script's real tag
 (e.g. `LSMC`), not just the group id. `Config.CrewTag.resolve`:
@@ -273,9 +272,8 @@ exports['ns-chat']:addGroupMessage('squad', source, {
     text   = 'Your squad captured the point.',
 })
 
--- Drive built-in squad / crew membership from a gang or lobby resource
--- (pass nil to remove). This feeds the built-in membership; if you set a
--- `resolve` for that group in config, that source wins instead.
+-- Drive squad / crew membership from a gang or lobby resource (pass nil to
+-- remove). If you set a `resolve` for that group in config, that source wins.
 exports['ns-chat']:setSquad(source, 'alpha')
 exports['ns-chat']:setCrew(source, 'redline')
 ```
@@ -288,8 +286,3 @@ exports['ns-chat']:setCrew(source, 'redline')
 | `whisper` | private message between two players |
 | `system` | plain system line |
 | `announce` | highlighted server announcement |
-
-## Roadmap
-
-- Rich autocomplete + suggestion params UI
-- Message history recall (Up/Down)
