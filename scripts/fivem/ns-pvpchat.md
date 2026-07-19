@@ -1,4 +1,4 @@
-# ns-chat
+# ns-pvpchat
 
 Fast, keyboard-first **PvP chat** for FiveM: channels, squad/crew groups,
 private messages, mentions, server-side anti-spam and moderation. Drop-in
@@ -57,7 +57,7 @@ input says so. The mouse key is rebindable in FiveM's key settings.
 - **Show/hide** — `L` cycles visibility (always visible / on new message /
   hidden); `T` to type. Only shows while actually in-game. Max 100 chars.
 - **Full command autocomplete** — suggests every registered command (the game's
-  own and other resources' `/commands`), not just ns-chat's (`Config.SuggestGameCommands`).
+  own and other resources' `/commands`), not just ns-pvpchat's (`Config.SuggestGameCommands`).
 - **Drop-in compatible** — listens to the stock `chat:addMessage` /
   `chat:addSuggestion` / `chat:clear`, and fires the `chatMessage` server event,
   so resources built on the default chat keep working. Prebuilt UI is bundled in
@@ -84,7 +84,7 @@ in autocomplete only for staff.
 
 ## Squad & crew
 
-ns-chat is a chat, not a gang or party system — squad/crew membership is owned
+ns-pvpchat is a chat, not a gang or party system — squad/crew membership is owned
 by whatever your server already runs. There is **no built-in join command**;
 membership is read through a `resolve` setting in `config.lua` (`Config.Groups`)
 or pushed in from your own resource via the `setSquad` / `setCrew` exports.
@@ -143,19 +143,19 @@ membership from another resource via the exports below.
 
 ## Installation
 
-1. Drop `ns-chat` into your server `resources` folder.
+1. Drop `ns-pvpchat` into your server `resources` folder.
 2. In `server.cfg`:
    - **Disable the stock `chat` resource** — comment out or remove the
-     `ensure chat` line. (`ns-chat` satisfies `provide 'chat'`, so resources
+     `ensure chat` line. (`ns-pvpchat` satisfies `provide 'chat'`, so resources
      that depend on chat keep working.)
-   - **Start ns-chat** (after your framework):
+   - **Start ns-pvpchat** (after your framework):
      ```cfg
-     ensure ns-chat
+     ensure ns-pvpchat
      ```
 3. Restart the server.
 4. Configure channels, commands and anti-spam in `config.lua`.
 
-ns-chat turns off FiveM's built-in system chat (the bottom-right `[ALL]` input
+ns-pvpchat turns off FiveM's built-in system chat (the bottom-right `[ALL]` input
 box) itself, from the client, the same way the stock chat does — so you do not
 need `set resources_useSystemChat false`. If you prefer the convar as well it
 does no harm, but it is read only at server boot.
@@ -188,17 +188,17 @@ add whichever credentials you want below.
    **Copy**. That copied string is your bot token.
    - No gateway intents, permissions or server invite are required — the token is
      only used to read public avatars via `GET /users/{id}`.
-4. Add it to `server.cfg` (server-only — put it above `ensure ns-chat`, and keep
+4. Add it to `server.cfg` (server-only — put it above `ensure ns-pvpchat`, and keep
    it out of any file you share or commit):
    ```cfg
-   set sv_chat_discord_bot_token "PASTE_YOUR_BOT_TOKEN_HERE"
+   set sv_pvpchat_discord_bot_token "PASTE_YOUR_BOT_TOKEN_HERE"
    ```
 5. That's it. The player must have **Discord running** while in game so FiveM
    provides their `discord:` identifier (the server looks the avatar up from it).
    If a player has Discord closed, they just get a monogram placeholder.
 
 > Use a **bot token**, not a webhook URL — webhooks cannot read user profiles.
-> Already run another resource with a Discord bot? ns-chat also falls back to the
+> Already run another resource with a Discord bot? ns-pvpchat also falls back to the
 > `ns_leaderboard_discord_token` convar, so you can reuse an existing token.
 
 #### Steam avatar — how to get the Web API key
@@ -207,9 +207,9 @@ add whichever credentials you want below.
    domain — any placeholder works — and copy the key).
 2. Add it to `server.cfg`:
    ```cfg
-   set sv_chat_steam_web_api_key "PASTE_YOUR_STEAM_KEY_HERE"
+   set sv_pvpchat_steam_web_api_key "PASTE_YOUR_STEAM_KEY_HERE"
    ```
-   - ns-chat also reads FiveM's standard `steam_webApiKey` convar as a fallback,
+   - ns-pvpchat also reads FiveM's standard `steam_webApiKey` convar as a fallback,
      so if you already set that you don't need a second line. Note `steam:`
      identifiers only exist at all when `steam_webApiKey` is set, so Steam avatars
      require it either way.
@@ -238,7 +238,7 @@ Config.StaffTag.ranks = {
 
 - **ACE** — `ace = 'admin'` (with the `group.<ace>` fallback).
 - **Discord role** — `discord = '<roleId>'`. Set `Config.StaffTag.discordGuild`
-  (your guild id) and the bot token convar `sv_chat_discord_bot_token` (same as
+  (your guild id) and the bot token convar `sv_pvpchat_discord_bot_token` (same as
   avatars); the bot must be in that guild. Roles are cached per player.
 - **Manual (static)** — `identifiers = { 'license:…', 'discord:…' }`.
 - **Manual (runtime)** — `/setstaff <id> <rankKey>` / `/unstaff <id>` (admin).
@@ -260,22 +260,22 @@ duration and reason, and the muted player is told why.
 
 ```lua
 -- Send a message to one player, or -1 for everyone.
-exports['ns-chat']:addMessage(target, {
+exports['ns-pvpchat']:addMessage(target, {
     mode   = 'system',          -- say | whisper | system | announce
     author = 'Dispatch',
     text   = 'The next round starts in 60 seconds.',
 })
 
 -- Send only to the members of a player's squad or crew.
-exports['ns-chat']:addGroupMessage('squad', source, {
+exports['ns-pvpchat']:addGroupMessage('squad', source, {
     mode   = 'system',
     text   = 'Your squad captured the point.',
 })
 
 -- Drive squad / crew membership from a gang or lobby resource (pass nil to
 -- remove). If you set a `resolve` for that group in config, that source wins.
-exports['ns-chat']:setSquad(source, 'alpha')
-exports['ns-chat']:setCrew(source, 'redline')
+exports['ns-pvpchat']:setSquad(source, 'alpha')
+exports['ns-pvpchat']:setCrew(source, 'redline')
 ```
 
 ## Message modes
