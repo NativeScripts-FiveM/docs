@@ -2,9 +2,9 @@
   "files": [
     "guide/fivem/getting-started.md",
     "scripts/fivem/ns-admin.md",
-    "scripts/fivem/ns-chat.md",
     "scripts/fivem/ns-leaderboard.md",
     "scripts/fivem/ns-loadingscreen-fivem.md",
-    "scripts/fivem/ns-poster.md"
+    "scripts/fivem/ns-poster.md",
+    "scripts/fivem/ns-pvpchat.md"
   ]
 }
