@@ -22,15 +22,18 @@ Standalone-first and framework-aware: runs fully standalone or alongside
 
 ### Every player customises their own HUD (in-game, no config edits)
 
-Open with **F7** (or `/pvphud`). Choices are saved per player and restored on
-reconnect.
+Open with `/hudsettings`. Choices are saved per player and restored on
+reconnect. A keybind is optional — set `Config.SettingsKey`.
 
 - **9 visual themes**, each with its own structure — bars, rings, pips, numbers,
   standing bars, framed modules — not just recolors
 - **Colors** — health, armor, weapon/ammo, stamina and the kill counter, each a
-  one-click preset, a custom picker, or "follow the theme"
+  one-click preset, a custom picker, or "follow the theme". The parts that aren't
+  always on screen — the weapon block, the kill counter — flash a sample when you
+  change their colour, icon or size, so you can see the change without a weapon
+  in hand or a live streak
 - **Icons** — swap the health / armor / kill-counter glyphs
-- **Sizes** — separate HUD-size and icon-size sliders
+- **Sizes** — separate HUD-size and icon-size sliders, 70% to 200%
 - **Free drag-and-drop layout** — place every element anywhere, with snap-to-edge
   and align-to-other-element guides so nothing lands crooked
 - **Element toggles** — turn any part of the HUD on or off
@@ -40,8 +43,10 @@ reconnect.
 
 - Only pushes a UI update when a value actually changes, and backs off polling
   while the HUD is hidden → idle resmon stays near `0.00ms`
-- Hidden until the character is fully loaded — never flashes over the loading
-  screen, character selector or spawn picker
+- Hidden until the player is actually in the world — not just past `playerLoaded`,
+  which every framework fires while the spawn camera is still up. It never shows
+  over the loading screen, the character selector, a spawn picker or FiveM's
+  "Awaiting scripts"
 - CDN-free NUI (React + Vite, fonts bundled locally)
 - No custom net events; the HUD is fully client-side
 
@@ -74,7 +79,7 @@ server-owner defaults and behaviour:
 | Key | Purpose |
 |---|---|
 | `Config.Theme` | Starting theme for new players |
-| `Config.Scale` | Starting HUD size (players fine-tune it, 0.70 – 1.50) |
+| `Config.Scale` | Starting HUD size (players fine-tune it, 70% – 200%) |
 | `Config.AccentRgb` | Accent color as `"R, G, B"` (the panel + default HUD accent) |
 | `Config.Elements` | Which parts ship enabled (health / armor / weapon / stamina / kills) |
 | `Config.Visibility` | `always`, or `armed` (only while holding a weapon) |
@@ -85,7 +90,7 @@ server-owner defaults and behaviour:
 | `Config.StaminaInverted` | Flip if the stamina bar reads backwards on your build |
 | `Config.MinimapDefault` | Minimap on/off out of the box |
 | `Config.HideWhileNoControl` | Hide the HUD while the player has no control (selectors, cutscenes) |
-| `Config.SettingsKey` / `Config.SettingsCommand` | Menu keybind (`F7`) and command (`/pvphud`) |
+| `Config.SettingsCommand` / `Config.SettingsKey` | Menu command (`/hudsettings`) and an optional keybind (none by default) |
 | `Config.Debug` | Dev logging + `/killtest` / `/killreset` — **set `false` before release** |
 
 Docs: https://fivem.nativescripts.com/docs/
