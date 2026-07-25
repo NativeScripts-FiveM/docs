@@ -162,9 +162,45 @@ disable it:
 | `ox_lib` | optional | Used automatically for notifications if present |
 | Node.js + npm | optional | Only for rebuilding the NUI |
 
-> **No framework is a hard dependency.** ESX / QBCore / Qbox are auto-detected at
-> runtime by the bundled `utils/` (ns-utils). Standalone also boots, but money,
-> jobs and identity features need a framework.
+> **No framework is a hard dependency.** ESX / QBCore / Qbox / vRP 1.x are
+> auto-detected at runtime by the bundled `utils/` (ns-utils). Standalone also
+> boots, but money, jobs and identity features need a framework.
+
+### vRP 1.x
+
+vRP is supported out of the box — money, items, jobs (groups of type `job`),
+permissions and character names all route through vRP's own proxy interface. No
+`@vrp/lib/utils.lua` entry is added to the manifest, so the same build still
+starts on a non-vRP server.
+
+| Feature | vRP mapping |
+|---|---|
+| Money (`cash`) | `getMoney` / `tryPayment` / `giveMoney` |
+| Money (`bank`) | `getBankMoney` / `setBankMoney` / `giveBankMoney` |
+| Inventory | `giveInventoryItem` / `tryGetInventoryItem` / `getInventoryItemAmount` |
+| Poster item | defined at runtime via `defInventoryItem` — nothing to add to vRP's config |
+| Jobs | `getUserGroupByType(user_id, 'job')` |
+| Admin | `hasPermission` → `hasGroup` → ACE, in that order |
+| Owner id | `user_id` (see `Config.Vrp.Identifier`) |
+| Name / phone | `getUserIdentity` |
+
+Two settings matter:
+
+```lua
+Config.Vrp.Identifier = 'user_id'   -- 'license' keeps posters placed before vRP was detected
+```
+
+```
+# only if your core folder is not named "vrp" (vrpex, renamed forks, …)
+setr ns_framework "vrp"
+setr ns_framework_resource "vrpex"
+```
+
+> **Upgrading a live vRP server:** before this version vRP was not detected, so
+> the resource ran in standalone mode — every economy call saw a balance of 0
+> and existing posters were stored under the player's `license:` identifier. Set
+> `Config.Vrp.Identifier = 'license'` to keep those posters owned by their
+> original players, or update the `owner` column to the matching `user_id`.
 
 ---
 
