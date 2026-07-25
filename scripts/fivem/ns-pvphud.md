@@ -38,6 +38,8 @@ reconnect. A keybind is optional — set `Config.SettingsKey`.
   and align-to-other-element guides so nothing lands crooked
 - **Element toggles** — turn any part of the HUD on or off
 - **Minimap** on/off
+- **Reset all settings** — one confirmed click puts every colour, icon, size and
+  dragged position back to the server's starting values
 
 ### Under the hood
 
