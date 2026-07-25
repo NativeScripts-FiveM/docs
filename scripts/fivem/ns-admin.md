@@ -7,7 +7,7 @@ peer-to-peer (ultra-low latency, media never touches the server) — all framewo
 
 **Standalone**: no framework dependency, no `screenshot-basic`, no external services. Drop it
 in and grant your admins an ACE. Optional framework features (money / job / inventory) light up
-automatically on ESX / QBCore / Qbox via the bundled `utils/` layer.
+automatically on ESX / QBCore / Qbox / vRP 1.x via the bundled `utils/` layer.
 
 ---
 
@@ -128,7 +128,7 @@ press **F6** in-game.
 
 > **TL;DR** — the minimum to get going is `ensure ns-admin` + `add_ace group.admin ns.admin allow`,
 > then restart. Everything else is optional. No resource dependencies; framework features (money /
-> job / inventory) auto-detect ESX / QBCore / Qbox. If you forget the ACE, the server console
+> job / inventory) auto-detect ESX / QBCore / Qbox / vRP. If you forget the ACE, the server console
 > prints a reminder and the panel stays locked — by design, there is no "open to everyone" mode.
 
 ---
@@ -232,9 +232,9 @@ add_principal identifier.license:XXXXXXXX group.helper
 | `ban` `banmanager` | ban a player / open the ban manager |
 | `godmode` `invisible` `setModel` `giveWeapon` | dev tweaks on the target |
 | `repairVehicle` `cleanVehicle` `deleteVehicle` | the target's vehicle |
-| `money` `job` `inventory` | framework player management |
+| `money` `job` `inventory` `giveItem` | framework player management (view inventory / give an item) |
 | `world` `announce` | weather/time / server announcement |
-| `selftools` | the admin's **own** dev tools (noclip, free cam, Dev Laser, spawn, become-ped…) |
+| `selftools` | the admin's **own** dev tools (noclip, free cam, Dev Laser, invisible, spawn, become-ped…) — also gates the radial wheel |
 | `roles` | assign/remove roles live (Staff manager) — **keep admin-only**, it's privilege escalation |
 
 **Assign roles live** — open the panel ▸ **Staff** (needs the `roles` permission), pick an online

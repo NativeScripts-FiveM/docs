@@ -4,7 +4,7 @@ Fast, keyboard-first **PvP chat** for FiveM: channels, squad/crew groups,
 private messages, mentions, server-side anti-spam and moderation. Drop-in
 replacement for the stock `chat` resource.
 
-Cross-framework: **ESX / QBCore / Qbox / standalone**, detected at runtime.
+Cross-framework: **ESX / QBCore / Qbox / vRP 1.x / standalone**, detected at runtime.
 
 ## Design
 
@@ -138,7 +138,7 @@ membership from another resource via the exports below.
 
 ## Requirements
 
-- One supported framework: ESX / QBCore / Qbox (or standalone)
+- One supported framework: ESX / QBCore / Qbox / vRP 1.x (or standalone)
 - (optional) ox_lib — used for notifications if present
 
 ## Installation

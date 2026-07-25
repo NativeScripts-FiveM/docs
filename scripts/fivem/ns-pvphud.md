@@ -6,7 +6,7 @@ no RP clutter. Just the combat state a player reads mid-fight, in one clean
 overlay that every player can restyle and rearrange to taste.
 
 Standalone-first and framework-aware: runs fully standalone or alongside
-**ESX / QBCore / Qbox** — the framework is detected at runtime, nothing to set.
+**ESX / QBCore / Qbox / vRP 1.x** — the framework is detected at runtime, nothing to set.
 
 ## Features
 
@@ -54,7 +54,7 @@ reconnect. A keybind is optional — set `Config.SettingsKey`.
 
 ## Requirements
 
-- Nothing mandatory. Works standalone; ESX / QBCore / Qbox are auto-detected if
+- Nothing mandatory. Works standalone; ESX / QBCore / Qbox / vRP 1.x are auto-detected if
   present.
 - Node.js + npm are only needed if you build the UI from source.
 

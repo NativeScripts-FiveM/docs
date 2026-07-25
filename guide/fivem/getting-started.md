@@ -1,6 +1,6 @@
 # Overview
 
-**Native Scripts (FiveM)** is a framework-agnostic script collection for FiveM (GTA5) servers. The goal: a single codebase that runs unchanged on ESX, QBCore, Qbox (qbx_core) and standalone.
+**Native Scripts (FiveM)** is a framework-agnostic script collection for FiveM (GTA5) servers. The goal: a single codebase that runs unchanged on ESX, QBCore, Qbox (qbx_core), vRP 1.x and standalone.
 
 ## Core layer: `ns-utils`
 
@@ -43,11 +43,27 @@ You never branch on the framework name — all of that lives inside `utils/`.
 
 | Category | Priority (first match wins) |
 |---|---|
-| Framework | `qbx_core` → `qb-core` → `es_extended` → standalone |
-| Inventory | `ox_inventory` → `qb-inventory` → `qs-inventory` → `codem-inventory` → `ps-inventory` → `esx_inventoryhud` → `gfx-inventory` |
+| Framework | `qbx_core` → `qb-core` → `es_extended` → vRP (`vrp` / `vRP` / `vrpex` / `vrp_ex`) → standalone |
+| Inventory | `ox_inventory` → `qb-inventory` → `qs-inventory` → `codem-inventory` → `ps-inventory` → `esx_inventoryhud` → `gfx-inventory` → vRP built-in |
 | Target | `ox_target` → `qb-target` → `qtarget` |
 | Skin | `illenium-appearance` → `fivem-appearance` → `qb-clothing` → `esx_skin` → `skinchanger` |
 | SQL | `oxmysql` → `ghmattimysql` → `mysql-async` |
+
+Renamed cores can be pointed at explicitly with convars:
+
+```
+setr ns_framework          "vrp"      # qbx | qb | esx | vrp | standalone
+setr ns_framework_resource "vrpex"    # vRP only: the actual folder name
+```
+
+### vRP 1.x
+
+vRP publishes no exports, so the layer speaks its Proxy event protocol directly —
+money, inventory, jobs (groups of type `job`), permissions, identity and the
+`vRP:playerSpawn` / `vRP:playerLeave` lifecycle all map onto the same `Utils.*`
+API. Nothing is added to any `fxmanifest.lua`, so the same build still starts on
+a non-vRP server. vRP inventory items are defined at runtime, so there is no
+`items.lua` entry to add.
 
 ## Next
 

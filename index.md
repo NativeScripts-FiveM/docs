@@ -4,7 +4,7 @@ title: Native Scripts — FiveM
 
 # Native Scripts — FiveM
 
-A framework-agnostic, production-ready script collection for **FiveM (GTA5)** servers. The same codebase runs unchanged on **ESX, QBCore, Qbox (qbx_core), and standalone**.
+A framework-agnostic, production-ready script collection for **FiveM (GTA5)** servers. The same codebase runs unchanged on **ESX, QBCore, Qbox (qbx_core), vRP 1.x, and standalone**.
 
 > **🧰 Core:** FiveM scripts ship with the `ns-utils` layer — a self-contained `utils/` folder copied into each resource. It auto-detects the framework, inventory, target, skin and SQL systems at runtime. Your code only ever calls `Utils.X(...)`. No shared library dependency.
 

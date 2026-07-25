@@ -1,6 +1,6 @@
 # ns-leaderboard
 
-Framework-agnostic **in-world PvP leaderboard** for FiveM (ESX / QBCore / Qbox / standalone).
+Framework-agnostic **in-world PvP leaderboard** for FiveM (ESX / QBCore / Qbox / vRP 1.x / standalone).
 Top players are spawned as **podium peds with crowns**, kills are **cross-validated** server-side,
 and everything — anim shop, badges, avatars, platform placement — is driven from one clean NUI.
 
@@ -27,14 +27,14 @@ Yellow / dark cyber UI (Chakra Petch), rendered to an in-world DUI surface.
 - **HUD auto-hide** — the fullscreen panel hides the vanilla minimap/HUD and auto-detects common NUI huds so they don't draw over it.
 - **Profile modal** — kills / deaths / K-D / headshots / playtime / accuracy / most-used weapons, owned badges, last-seen, all from built-in tracking.
 - **10 languages** — `en, tr, fr, de, es, pt, it, pl, nl, ru` — pick one in config, add your own easily.
-- **Built on `ns-utils`** — all framework branching is behind `Utils.*`; works on ESX, QBCore, Qbox, or standalone.
+- **Built on `ns-utils`** — all framework branching is behind `Utils.*`; works on ESX, QBCore, Qbox, vRP 1.x, or standalone.
 
 ---
 
 ## Dependencies
 
 - **oxmysql** — required (SQL backend).
-- **ESX / QBCore / Qbox** — any one, auto-detected at runtime. Not required (runs standalone too).
+- **ESX / QBCore / Qbox / vRP 1.x** — any one, auto-detected at runtime. Not required (runs standalone too).
 
 Optional, auto-detected — no config needed:
 
@@ -49,7 +49,7 @@ Optional, auto-detected — no config needed:
 
 The resource is **self-contained** — the podium, crown, sign and animation stream assets all ship inside `stream/`. No extra downloads.
 
-**Before you start:** make sure **oxmysql** is installed and started. A framework (ESX / QBCore / Qbox) is auto-detected but not required — it also runs standalone.
+**Before you start:** make sure **oxmysql** is installed and started. A framework (ESX / QBCore / Qbox / vRP 1.x) is auto-detected but not required — it also runs standalone.
 
 **1. Drop the resource** into your server, e.g. `resources/[ns]/ns-leaderboard/`. Keep the folder name **`ns-leaderboard`**.
 
