@@ -89,7 +89,10 @@ into the resource — no shared dependency).
 
 ### Economy
 - `Config.Economy.Enabled` gates everything. Placing costs `PlaceCost`,
-  renewing costs `RenewCost`, both via `Utils.RemoveMoney` (`cash` or `bank`).
+  renewing costs `RenewCost`, both via `Utils.RemoveMoney`.
+- `Config.Economy.Account` — `'cash'`, `'bank'`, or `'auto'` (wallet first,
+  shortfall from the bank; on vRP this is `tryFullPayment`). Refunds go to the
+  wallet.
 - Per-prop (`PropCosts`) and per-category (`CategoryCosts`) overrides; optional
   `RefundOnRemove` when the owner removes their own poster.
 
@@ -344,7 +347,7 @@ Most common causes:
 
 | Log line | Fix |
 |---|---|
-| `payment failed — cost=… balance=0` | The player has no money in that account. On vRP the wallet is `cash` and the bank is `bank` — switch with `Config.Economy.Account`, or set `Config.Economy.Enabled = false`. A balance of `0` while the player clearly has money means the framework is not being detected (check the boot log). |
+| `payment failed — cost=… balance=0` | The player has no money **in that account**. On vRP the wallet is `cash` and the bank is `bank`, and most vRP servers keep everything in the bank — set `Config.Economy.Account = 'auto'` to charge the wallet first and take the shortfall from the bank. A balance of `0` while the player clearly has money in *both* means the framework is not being detected (check the boot log / `posterdiag`). |
 | `job cannot place` | `Config.Permissions.PlaceJobs` is not empty and the player's job is not in it. On vRP the "job" is their group of type `job`. |
 | `missing item …` | `Config.Item.Enabled/Consume` is on and the player has no poster item. |
 | `cooldown …` / `max posters reached` | `Config.PlaceCooldown` / `Config.MaxPostersPerPlayer`. |
