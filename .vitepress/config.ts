@@ -83,6 +83,7 @@ export default defineConfig({
       { text: '🏆 ns-leaderboard', link: '/scripts/fivem/ns-leaderboard' },
       { text: '🎬 ns-loadingscreen', link: '/scripts/fivem/ns-loadingscreen-fivem' },
       { text: '🖼️ ns-poster', link: '/scripts/fivem/ns-poster' },
+      { text: '🎁 ns-kits', link: '/scripts/fivem/ns-kits' },
     ],
 
     socialLinks: [
