@@ -110,45 +110,82 @@ Weapons are configured separately in the `weapons` list (`WEAPON_PISTOL` etc.) a
 - `removeInventoryItem` only acts when the result would be ≥ 0, so a rollback can remove nothing. That is checked the same way — a rollback that did not happen is never reported as one.
 - `addWeapon` is wrapped in `if not hasWeapon`, so giving a weapon to a player who already owns it did nothing at all, not even the ammo. ns-kits tops the ammo up instead, which on a PvP server is the usual case.
 
-## Discord role setup
+## Discord bot setup
 
-The bot is only needed for role-gated kits. If you don't want them, leave `Config.Discord.Enabled = false` and set `enabled = false` on the gated kits.
+The bot is **only** needed for the role-gated and status kits (Discord, Streamer, Booster and the premium tiers). The free kits work with no bot at all. There is **no on/off switch** in the config: role and status gating turn on automatically the moment a bot token and guild ID are present, and stay off — every gated kit simply locked — when they are not. If you don't want gated kits, leave the token empty and set `enabled = false` on them.
 
-1. Create a bot at the Discord Developer Portal, and under **Bot → Privileged Gateway Intents** enable **SERVER MEMBERS INTENT**.
-2. Invite the bot to your guild (OAuth2 → URL Generator → scope `bot`).
-3. Put the token and guild ID in `server/sv_config.lua`. It reads convars by default, so the recommended setup keeps the secret out of the resource entirely:
-   ```
-   set ns_kits_discord_token "YOUR_BOT_TOKEN"
-   set ns_kits_discord_guild "YOUR_GUILD_ID"
-   ```
-   Put those in a `server.cfg` that is not committed anywhere public.
-4. Copy each role ID (Discord → Developer Mode → right-click role → Copy Role ID) into `ConfigServer.Discord.Roles` in **`server/sv_config.lua`**, and set `Config.Discord.Enabled = true` in `config.lua`.
+Everything you configure below lives in one file, **`server/sv_config.lua`**, which the server loads alone and never sends to a client. It stays editable even on an escrow-protected build, so this is the only file you touch.
 
-> Everything that identifies your server — bot token, guild ID, role IDs, the status keyword, the unlock link — lives in `server/sv_config.lua`, which the server loads alone. `config.lua` is a `shared_script`: every value in it is downloaded by every player who connects, so it holds behaviour and wording only. Nothing in it names your Discord.
+### 1 · Create the application and bot
 
-Every gated kit is resolved the same way, paid tiers included: `gold`, `diamond`, `elite` and the rest are role IDs in `ConfigServer.Discord.Roles` and nothing else. Add a key there and any kit can gate on it.
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications) → **New Application**, give it a name, **Create**.
+2. Open the **Bot** tab → **Reset Token** → **Copy**. This is your bot token — treat it like a password, it is never shown again.
+3. Still on the **Bot** tab, scroll to **Privileged Gateway Intents** and enable:
+   - **SERVER MEMBERS INTENT** — required, this is how the bot reads a member's roles.
+   - **PRESENCE INTENT** — only if you use a status kit (the `repping` kit or your own `requireStatus = true`). Skip it otherwise.
 
-**Role changes take effect immediately on claim, and within seconds in the menu.** Role lookups are cached per player for `ConfigServer.Discord.CacheTtl` seconds (default 10), and that cache only feeds the *menu*. Claiming re-asks Discord at the moment items change hands, so a role you took away cannot pay out even once more, and a role you just granted works the instant the player can press the button.
+### 2 · Invite the bot to your guild
 
-The cache exists to stop one Discord API call per menu open, which a room full of players would turn into a 429 — and a rate-limited check fails every gated kit at once. Ten seconds means a role you just granted shows up as soon as the player reopens the menu. A player's entry is also dropped when they disconnect, and the cache lives in the resource, so restarting ns-kits clears it for everyone.
+1. **OAuth2 → URL Generator** → tick the **`bot`** scope.
+2. Open the generated URL, pick your server, **Authorize**. The bot needs no special permissions — it only reads members. It will show offline in the member list; that is normal, it still works.
 
-## Status reward — "put our name in your Discord status"
+### 3 · Give the token and guild ID to the resource
 
-A kit with `requireStatus = true` unlocks when the player's **Discord custom status** contains `ConfigServer.Discord.StatusKeyword` (case-insensitive). The shipped `repping` kit is an example — it's disabled by default.
+The two secrets read from convars by default, so the recommended setup keeps them **out of the resource files entirely** — put them in a `server.cfg` that is not in any public repo:
 
-**Setup is two steps, and uses the same bot token as the role checks:**
+```cfg
+set ns_kits_discord_token "YOUR_BOT_TOKEN"
+set ns_kits_discord_guild "YOUR_GUILD_ID"
+```
 
-1. Developer Portal → your app → Bot → Privileged Gateway Intents → enable **PRESENCE INTENT**.
-2. In `config.lua`:
-   ```lua
-   ConfigServer.Discord.StatusKeyword = {
-       Enabled = true,
-       Keyword = 'nativescripts.com',
-   }
-   ```
-   …then set `enabled = true` on the `repping` kit (or add `requireStatus = true` to your own).
+To copy the guild ID: Discord → **User Settings → Advanced → Developer Mode** on, then right-click your server icon → **Copy Server ID**.
 
-That's it. **No second bot, no extra token, no Node.js install, no separate process to keep running.** A custom status isn't exposed by Discord's REST API — it only arrives over the Gateway — so this resource keeps its own Gateway connection in `server/gateway.js`, running inside the FXServer JS runtime with zero npm dependencies.
+(You *can* paste them straight into `ConfigServer.Discord` in `server/sv_config.lua` instead, but the convar route is safer — the token never lands in a file you might share.)
+
+### 4 · Map your role IDs
+
+With Developer Mode on, go to **Server Settings → Roles**, right-click a role → **Copy Role ID**, and paste it into `ConfigServer.Discord.Roles` in `server/sv_config.lua`:
+
+```lua
+Roles = {
+    member   = '1089999246914232381',
+    booster  = '1093451710183252050',
+    streamer = '1248207217174384641',
+    veteran  = '',
+    vip      = '',
+    silver   = '',
+    gold     = '1281991139775479838',
+    platinum = '',
+    premium  = '',
+    diamond  = '1281990956908023869',
+    elite    = '',
+}
+```
+
+A key left **empty** locks every kit that gates on it, and the server console names it by kit at startup so a forgotten ID is never a silent mystery. Add or rename keys freely — a kit's `requireRole` is just a key from this table, so any role can gate any kit.
+
+### 5 · (Optional) The status kit
+
+The `repping` kit unlocks when a player puts your keyword in their **Discord custom status**. It uses the *same* bot token — no second bot, no extra process. After enabling **PRESENCE INTENT** in step 1, set your keyword in `server/sv_config.lua`:
+
+```lua
+ConfigServer.Discord.StatusKeyword = 'nativescripts.com'
+```
+
+…then set `enabled = true` on the `repping` kit in `config.lua` (or add `requireStatus = true` to your own). Status rewards turn on automatically once the keyword is set — there is no separate toggle. A custom status is not available over Discord's REST API, so the resource opens its own Discord Gateway connection from inside `server/gateway.js`, in the FXServer JS runtime, with zero npm dependencies.
+
+Notes on the status kit:
+
+- The status is read from a live cache, so a player's status change applies **immediately** — no refresh wait.
+- The player must be **online** and share a guild with the bot. An offline user has no presence.
+- `requireStatus` and `requireRole` can be combined; both must pass.
+- If PRESENCE INTENT is off, the server console prints a red line at startup (Discord close code `4014`) and status kits stay locked instead of failing silently.
+
+### How it stays fresh and safe
+
+Every gated kit is resolved the same way, paid tiers included — `gold`, `diamond`, `elite` and the rest are just role IDs and nothing more.
+
+**Role changes take effect immediately on claim, and within seconds in the menu.** Role lookups are cached per player for 10 seconds, and that cache only feeds the *menu*. Claiming re-asks Discord at the moment items change hands, so a role you took away cannot pay out even once more, and a role you just granted works the instant the player can press the button. The short cache exists only to stop one Discord API call per menu open — which a busy server would turn into a 429 that fails every gated kit at once. A player's cache entry is dropped on disconnect, and the whole cache clears when you restart ns-kits.
 
 Notes:
 
@@ -161,11 +198,9 @@ Notes:
 
 | Command | Does |
 |---|---|
-| `/resetkit` | Clears **your own** cooldowns |
-| `/resetkit <id>` | Clears every cooldown for that player |
-| `/resetkit <id> <kitId>` | Clears one kit for that player |
+| `/resetkit` | Clears **all your own** cooldowns |
+| `/resetkit <id>` | Clears **all** cooldowns for that player |
 | `/kitdebug` | Prints a per-kit UNLOCKED/LOCKED diagnosis to the server console |
-| `/kitsound` | Plays the claim sound then the failure sound, and prints both names — a wrong sound name is silent rather than an error, so this is how you tell those apart |
 
 Both are gated on ACE. `ConfigServer.AdminAces` in `server/sv_config.lua` lists
 which ones count (`admin` and `ns-kits.admin` by default), and both `<ace>` and
@@ -233,29 +268,12 @@ Kits appear in the order you write them in `config.lua`, inside their group. Not
 
 A kit that is counting down draws a ring around its icon that fills as its cooldown runs out, so "nearly back" is something you can see down the list without reading every countdown. When nothing at all is claimable, the footer says when the first one returns.
 
-## Cooldown scope
+## Cooldowns
 
-```lua
-Config.CooldownScope = 'character'    -- or 'account'
-```
-
-Whose cooldown is it? This used to be answered by whichever framework you run
-rather than by you: qb, qbx and Qbox hand out a per-character id, ESX hands out an
-account id. So the same kit was once-per-character on one and once-per-account on
-the other, and on ESX a player's second character could not claim a kit the first
-one already had.
-
-- **`'character'`** — one cooldown per character, using the framework's own
-  character id. ESX has none, so it falls back to the account and prints one line
-  at startup saying so.
-- **`'account'`** — one cooldown per player, shared by every character they own.
-  Keyed on the license, which survives a character wipe. Usually what you want on
-  a PvP server: it stops someone re-rolling a character to claim the same kit
-  again.
-
-Changing this changes which key cooldowns are stored under, so existing rows in
-`ns_kits_claims` will no longer match. That is harmless — the affected players get
-one extra claim — but if you would rather start clean, `TRUNCATE ns_kits_claims`.
+A cooldown belongs to the framework's own player identifier: qb / qbx / Qbox use a
+per-character `citizenid`, so a kit is once-per-character there; ESX has no
+per-character id, so cooldowns are per account and shared by all of a player's
+characters. They are stored in the `ns_kits_claims` table keyed on that identifier.
 
 ## Notifications
 
@@ -279,27 +297,26 @@ Everything a server admin needs is in `config.lua`:
 
 | Key | Purpose |
 |---|---|
-| `Config.UI` | Your server name, an optional logo image, and where a locked kit sends the player |
-| `Config.Locale` | Language — `en` or `tr`, see [Languages](#languages) |
-| `Config.Sounds` | Claim / failure sound (game frontend sounds, follow the SFX slider) |
+| `Config.UI` | Your server name and an optional logo image |
+| `Config.Locale` | Language — `en`, `tr`, `fr` or `pt`, see [Languages](#languages) |
 | `Config.Notify` | Notification style, corner and duration — see [Notifications](#notifications) |
-| `Config.CooldownScope` | `'character'` or `'account'` — see [Cooldown scope](#cooldown-scope) |
 | `Config.OpenCommand` | Chat command that opens the menu (default `kit`) |
 | `Config.Debug` | Print debug logs to the server console |
-| `Config.Discord` | Two switches: role gating on/off, status rewards on/off. The IDs are server-side |
 | `Config.Kits` | The kit definitions |
 
-`Config.Messages` and the menu's own wording are **not** in `config.lua` — they
-are folded in from `locales/<code>.lua` at load. Translate there.
+Everything that identifies your Discord — bot token, guild ID, role IDs, the
+status keyword and the unlock link — is in `server/sv_config.lua`, not here.
+There is no Discord switch in `config.lua`: gating turns on when the bot is
+configured and stays off (kits locked) when it isn't. `Config.Messages` and the
+menu's own wording live in `locales/<code>.lua`, not `config.lua`.
 
 ## Languages
 
-Every player-facing string lives in `locales/<code>.lua` — buttons, statuses,
-errors, and the names of the kits that ship with ns-kits. `config.lua` holds
-behaviour only, so a translator never has to open it.
+The menu's own wording — buttons, statuses, headings, errors — lives in
+`locales/<code>.lua`. Four ship: **English, Turkish, French and Portuguese**.
 
 ```lua
-Config.Locale = 'tr'    -- 'en' or 'tr' ship; copy en.lua to add your own
+Config.Locale = 'en'    -- en, tr, fr, pt ship; copy en.lua to add your own
 ```
 
 - **A partial translation is safe.** English is applied first and your file on
