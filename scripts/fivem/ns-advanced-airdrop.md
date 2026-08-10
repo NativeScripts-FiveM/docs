@@ -31,6 +31,9 @@ runtime through the bundled `utils/` layer — there is nothing to install along
   interval, minimum players, instant drops), an Active tab, a Custom Drop builder (click
   the map to place it, pick items and amounts, crate, effect, announcement, countdown
   length), and a History tab with who claimed what.
+- **Edit a live drop** — the contents of a crate already in the world can be changed from
+  the Active tab: add items, remove them, change amounts. Useful when a drop went out with
+  the wrong loot and you would rather fix it than delete it and start again.
 - **Visual pickers** — crates and particle effects are chosen from in-game image cards
   that ship with the resource, not from a dropdown of model names.
 - **Effects** — ten verified particle presets (flare, fire, lightning, money rain, smoke,
@@ -122,6 +125,23 @@ picker (which the server also uses as a whitelist).
 > cannot be given, and the player sees a misleading "inventory full" message.
 > You do not have to check by hand: every name is compared against your inventory on
 > startup and mismatches are printed to the console.
+
+### Editing a drop that is already out
+
+The Active tab has an **Edit items** button on every drop. It opens the same item picker
+the Custom Drop builder uses, pre-filled with what is currently in that crate.
+
+The server re-checks the submitted list against `Config.LootTable` and the
+`Config.CustomDropLimits`, exactly as it does for a custom drop — the panel is a client
+and is not trusted.
+
+- **Loot mode 1** — the contents are read when someone claims, so the change applies to
+  whoever gets there. A drop that has already been claimed can no longer be edited.
+- **Loot mode 2** — the items live in a stash, so the stash is emptied and refilled.
+  Anything players had already taken out is theirs and is not clawed back.
+
+Every edit is written to the console and, if a webhook is configured, posted to Discord
+with the before and after contents.
 
 ### Minimum players
 
