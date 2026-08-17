@@ -12,7 +12,7 @@ Cross-framework — **ESX · QBCore · Qbox · vRP 1.x · standalone**. The fram
 
 1. Drop `ns-chameleon` into your `resources` folder.
 2. Add `ensure ns-chameleon` to `server.cfg`.
-3. If you run an inventory, [register the seeker's weapon](#seeker-weapon) — three lines, and the one setup step this resource has.
+3. If you run an inventory, register the seeker's weapon as an item — see **Seeker weapon** below. Three lines, and the one setup step this resource has.
 
 **No hard dependencies.** It declares none, so it cannot refuse to start because something is missing. `ox_lib` is used for nicer notifications if you happen to have it.
 
@@ -198,9 +198,3 @@ All gated behind `Config.Debug`, which ships off.
 **`/chamalign`** — from inside the painter, asks whether the statue the painter is showing matches the pose the body is actually in, and draws both origins so a wrong one reads as displaced or turned at a glance.
 
 **`/chamwhistle [metres] [bearing]`** — play a whistle from a given direction, to hear the spatial audio without a second player.
-
----
-
-## Credits
-
-Character mesh modelled from scratch (procedural primitives, voxel remesh union, rigged to the GTA skeleton). Proportions visually referenced from ["Meccha Chameleon white character"](https://sketchfab.com/3d-models/meccha-chameleon-white-character-de8cbf6d00e6490bbbead170d85ab1e8) by [samkar_09](https://sketchfab.com/samkar_09) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). No third-party geometry ships in the resource.
