@@ -187,19 +187,26 @@ overwritten. The server console prints the result when the resource starts:
 The open countdown (`Config.Cycle.OpenDelayMs`) starts when the crate touches
 the ground, so slowing the scene down does not eat into it.
 
-### Countdown display
-
-`Config.DefaultDisplay` picks how a drop shows its countdown: `'screen'` for the panel on
-the crate, `'drawtext'` for floating 3D text. Admins override it per drop in the Custom
-Drop tab, so this is only the default.
-
-If the timer is hard to read on your crate, raise `Config.Screen.countdownScale`.
-
 ### Crate screen
 
-`Config.Screen.model` and `Config.Screen.rtName` belong together — the second is the
-render-target surface inside the first, so an arbitrary prop will not work. Change them
-only as a pair.
+A drop shows its countdown on a panel attached to the crate. Admins can switch an
+individual drop to floating 3D text in the Custom Drop tab; `Config.Screen.enabled = false`
+turns the panel off server-wide and every drop falls back to floating text.
+
+What you can tune:
+
+| Setting | What it does |
+|---|---|
+| `enabled` | Turn the crate panel on or off entirely |
+| `distance` | Draw range in metres. It redraws every frame, so keep it short |
+| `lockedColor` / `openColor` | Panel colour before and after the crate opens, `{ r, g, b, a }` |
+| `iconSize` / `iconAspect` | Padlock size, and its stretch if it looks wrong on your crate |
+| `countdownScale` | Raise this if the timer is hard to read |
+
+The render-target internals — which prop carries the surface, and where the panel sits on
+it — are not in the config. They are a matched set that only works for one specific prop,
+so they live in `client/screen.lua`. Per-crate alignment is done in game with
+`/airdropscreen`, which writes into `Config.Prop.options`.
 
 > Only one crate can carry the screen at a time. That is an engine limit, not a setting:
 > a named render target exists once per model, so the screen goes to the crate nearest
