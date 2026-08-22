@@ -159,11 +159,33 @@ A drop picks a random entry from `Config.Locations`, but only from the ones no a
 is within 100 m of. A second drop therefore never lands on the first one's coordinate. With
 nothing active the whole list is in play, so single drops are as varied as ever.
 
-When every entry is occupied the next drop is placed 40–90 m from a random point rather
-than being cancelled.
+When every entry is occupied the next drop is placed 110–160 m from a random point rather
+than being cancelled — far enough out that it still counts as a separate location.
 
 Keep your own entries at least ~150 m apart. Points closer than that will not block each
 other, but they will look like one drop location to players.
+
+### Scene speed
+
+How long the flypast and the descent take is set with two speeds, not with
+durations — so you can picture the result instead of timing a drop by hand.
+
+| Setting | Unit | Default | What it does |
+|---|---|---|---|
+| `Config.Scene.planeSpeedKmh` | km/h | `200` | Speed of the supply plane. 120 is a slow flypast, 300 is a real cruise. |
+| `Config.Scene.fallSpeedMs` | m/s | `8` | How fast the crate descends. A real cargo parachute lands at 5–7 m/s; much above 12 and it reads as a dropped rock rather than a parachute. |
+| `Config.Scene.altitude` | m | `220` | Release height. Raising it makes the fall longer without changing how fast the crate moves. |
+
+The seconds the rest of the resource works in (`approachSec`, `fallSec`) are
+worked out from these on startup — do not edit them directly, they are
+overwritten. The server console prints the result when the resource starts:
+
+```
+[ns-advanced-airdrop] scene: plane 200 km/h -> 16 s approach, crate 8.0 m/s from 220 m -> 28 s fall (44 s in total).
+```
+
+The open countdown (`Config.Cycle.OpenDelayMs`) starts when the crate touches
+the ground, so slowing the scene down does not eat into it.
 
 ### Countdown display
 
