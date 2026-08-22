@@ -200,8 +200,13 @@ What you can tune:
 | `enabled` | Turn the crate panel on or off entirely |
 | `distance` | Draw range in metres. It redraws every frame, so keep it short |
 | `lockedColor` / `openColor` | Panel colour before and after the crate opens, `{ r, g, b, a }` |
-| `iconSize` / `iconAspect` | Padlock size, and its stretch if it looks wrong on your crate |
+| `iconLocked` / `iconOpen` | The icon shown before and after the crate opens. Any emoji, or short text |
+| `iconSize` / `iconAspect` | Icon size, and its stretch if it looks wrong on your crate |
 | `countdownScale` | Raise this if the timer is hard to read |
+
+The icon is drawn by the browser layer rather than the game's fonts, so it is not limited
+to characters the game can render. A money bag or a short word like `'LOOT'` works just as
+well as the default padlocks; anything longer than one character is scaled down to fit.
 
 The render-target internals — which prop carries the surface, and where the panel sits on
 it — are not in the config. They are a matched set that only works for one specific prop,
