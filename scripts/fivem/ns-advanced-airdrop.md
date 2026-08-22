@@ -205,8 +205,12 @@ What you can tune:
 | `countdownScale` | Raise this if the timer is hard to read |
 
 The icon is drawn by the browser layer rather than the game's fonts, so it is not limited
-to characters the game can render. A money bag or a short word like `'LOOT'` works just as
-well as the default padlocks; anything longer than one character is scaled down to fit.
+to characters the game can render. Paste any emoji straight between the quotes — 💰 ⭐ 🎁
+all work, including multi-part ones like ☠️ or 👍🏽, and so does a short word like `'LOOT'`
+(text longer than one character is scaled down to fit).
+
+> Save `config.lua` as UTF-8. Every code editor does by default and Windows Notepad asks;
+> if the encoding is wrong the icon falls back to a padlock rather than showing garbage.
 
 The render-target internals — which prop carries the surface, and where the panel sits on
 it — are not in the config. They are a matched set that only works for one specific prop,
