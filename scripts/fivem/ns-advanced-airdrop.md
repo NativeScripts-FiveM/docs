@@ -31,6 +31,9 @@ runtime through the bundled `utils/` layer — there is nothing to install along
   interval, minimum players, instant drops), an Active tab, a Custom Drop builder (click
   the map to place it, pick items and amounts, crate, effect, announcement, countdown
   length), and a History tab with who claimed what.
+- **Repeat a past drop** — every entry in the History tab has a *Drop this again*
+  button: same place, same contents, same crate, one click. No rebuilding a drop you
+  already put together once.
 - **Edit a live drop** — the contents of a crate already in the world can be changed from
   the Active tab: add items, remove them, change amounts. Useful when a drop went out with
   the wrong loot and you would rather fix it than delete it and start again.
@@ -142,6 +145,23 @@ and is not trusted.
 
 Every edit is written to the console and, if a webhook is configured, posted to Discord
 with the before and after contents.
+
+### Repeating a past drop
+
+The History tab keeps the last `Config.History.maxEntries` drops (40 by default, in memory
+only — it resets when the resource restarts). Each one has a **Drop this again** button
+that re-sends it exactly: same coordinates, same items and amounts, same crate, effect,
+announcement and countdown length.
+
+Only the drop's id travels from the panel; everything else is read from the server's own
+record, so there is nothing for a client to tamper with. It is still re-validated on the
+way out — if an item has since been removed from `Config.LootTable`, the repeat is refused
+and names the item rather than quietly dropping a half-empty crate. A crate or effect that
+no longer exists in the config falls back to the default instead of blocking the repeat.
+
+> The coordinates are used as-is, so repeating a drop whose crate is still on the ground
+> puts a second one in the same spot. That is deliberate — it is an explicit request for
+> that location.
 
 ### Minimum players
 
