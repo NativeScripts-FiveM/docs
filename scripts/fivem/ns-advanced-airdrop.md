@@ -55,6 +55,10 @@ runtime through the bundled `utils/` layer — there is nothing to install along
 
 Nothing is mandatory.
 
+**OneSync must be on.** The server checks a player's real position before handing over a
+drop, and that check needs state awareness — the resource declares it as a dependency and
+will not start without it.
+
 | Optional | What it adds |
 |---|---|
 | ESX / QBCore / Qbox | Item handout through the framework, admin group fallback |
@@ -158,6 +162,9 @@ record, so there is nothing for a client to tamper with. It is still re-validate
 way out — if an item has since been removed from `Config.LootTable`, the repeat is refused
 and names the item rather than quietly dropping a half-empty crate. A crate or effect that
 no longer exists in the config falls back to the default instead of blocking the repeat.
+
+Repeat obeys `Config.MaxConcurrentDrops` and has a short per-admin cooldown, so working
+down a long history list cannot flood the map.
 
 > The coordinates are used as-is, so repeating a drop whose crate is still on the ground
 > puts a second one in the same spot. That is deliberate — it is an explicit request for
