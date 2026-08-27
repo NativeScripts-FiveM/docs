@@ -249,7 +249,7 @@ setr ns_framework_resource "vrpex"
   consume one item per placement (`Config.Item.Consume`). Set
   `Config.Command.Enabled = false` for item-only access.
 - Adding the item to your inventory (ox_inventory / qb-inventory / ESX) is a
-  one-time step — see the [`install/`](install/) folder.
+  one-time step — see the `install/` folder in the resource.
 
 ---
 
