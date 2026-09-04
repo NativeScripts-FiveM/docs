@@ -24,9 +24,13 @@ Docs: <https://fivem.nativescripts.com/docs>
 
 **Lobby.** `/cham` opens the room browser — join one or open your own. The host sets the arena, hide time, hunt time, rounds and how many seekers; everyone in the room watches those rows update live. You pick your side by taking an empty seat. Several rooms can play at once, and a room survives its match for the rematch.
 
+A room opens with 8 hider seats and 2 seekers, and the host can take it to **16 hiders and 6 seekers** — 22 players in one arena. Seats appear as they are added and the hider list starts scrolling once it is as tall as the settings beside it, so a full room reads as easily as an empty one.
+
 A clown NPC in Legion Square opens the same panel, for players who never read commands.
 
-**Hide.** Hiders paint, pose and place themselves. Seekers spend this phase in a private copy of the arena — same map, nobody in it — so they can walk it and paint themselves without watching anyone choose a hiding place. When the hunt starts they are dropped on the seeker spawn.
+**Hide.** Hiders paint, pose and place themselves. Seekers spend this phase in a private copy of the arena — same map, nobody in it — so they can learn the ground and get their weapon in hand without watching anyone choose a hiding place. When the hunt starts they are dropped on the seeker spawn.
+
+Seekers paint in that copy too, on their own body and their own atlas. It is warpaint rather than camouflage — nothing about a seeker is meant to be hidden — and it is the reason the hide phase is not dead time for them. The paint stays on for the hunt; the brush does not.
 
 **Hunt.** Seekers sweep the arena. A find is decided by the stun shotgun's damage event, so falling, traffic or an unrelated gun never gives a hider away. Once per interval every living hider whistles at the same time, which is the round's answer to sitting in one corner all match.
 
@@ -38,7 +42,7 @@ A clown NPC in Legion Square opens the same panel, for players who never read co
 
 | Key | What it does |
 |---|---|
-| `H` | **Paint.** Orbit camera and a free cursor on your own body. Pick a colour, size the brush, draw. `/paint <hex>` fills the whole body at once. |
+| `H` | **Paint.** Orbit camera and a free cursor on your own body. Pick a colour, size the brush, draw. `/paint <hex>` fills the whole body at once. Hiders paint for as long as they are alive; seekers only during the hide phase. |
 | `G` | **Place.** Aim a ghost of your painted body at a surface — scroll spins it, the marker turns green when a body fits and red when it does not, LMB seats you. Backspace abandons the aim. Once seated, fine-tune with WASD or the arrow keys, scroll for up and down, Q/E to turn on the spot. Space breaks free. |
 | `J` (hold) | **Pose wheel.** Hold, move to a slice, release to strike it. A pose is *carried*: the clip owns your whole body and WASD pushes you along underneath it, so you go looking for a hiding place already wearing the disguise. Release over the centre to drop it. |
 | `F` | **Look around** without moving. Your body stays exactly where you seated it — and stays shootable — while the camera roams up to 25 m. Hiders only. |
@@ -71,7 +75,9 @@ Either way the round ends when the hiders run out or the clock does. Seekers can
 
 `config.lua` holds the settings: match lengths, arenas, player caps, keys, the lobby NPC, the whistle, the confetti, and the language.
 
-Everything else lives in `shared/tuning.lua` — model names, paint pipeline constants, placement collision maths, the pose table. Those are the parts the game mode is built out of rather than settings, and changing one does not tune a round, it breaks it. Both files ship readable and unencrypted; the split is there so nothing in `config.lua` is a trap.
+`config.lua` and `locales/` ship **unencrypted**, because they are the parts you are meant to edit. Everything else — model names, paint pipeline constants, placement collision maths, the pose table — is the machinery the game mode is built out of rather than settings, and is not exposed: changing one of those numbers does not tune a round, it breaks it.
+
+The one value that can genuinely differ per server is the routing bucket, and that is in `config.lua` for exactly that reason. Change it only if `1377` is already taken on your server.
 
 **Turn `Config.Debug` off on a live server.** It ships off. On, it opens the dev commands to everyone.
 
@@ -97,6 +103,14 @@ Three things must survive an edit, and all three fail quietly:
 - **`{tokens}`** — a few `ui.*` strings are filled in by the interface, not by Lua. A missing `{hider}` just never shows a name.
 - **Apostrophes** — the strings are single-quoted, so a straight `'` ends the string early and **the whole language file fails to load**. Write `’` instead, or escape it as `\'`.
 
+### Tattoos
+
+A round swaps your model, and a new ped carries no tattoos — they are ped *decorations*, and the swap discards them.
+
+They come back. Before the swap the resource reads the decorations off your ped with `GET_PED_DECORATIONS` and reapplies them once your appearance is restored, so it does not matter which tattoo script put them there — it never asks one. Nothing to configure.
+
+If something else on your server wants to know a body has finished restoring, it can listen for `ns-chameleon:client:appearanceRestored`, which is fired with the ped handle.
+
 ### Confetti
 
 Every seeker shot pops confetti, and where it pops says whether it found anybody: a big burst on the hider for a confirmed hit, a smaller one wherever the pellets actually landed for a miss. `Config.HitFx` and `Config.MissFx` set the effect, its size and the follow-up bursts that turn one puff into an explosion. Set either to `nil` to switch that half off.
@@ -111,7 +125,7 @@ GTA's own blood decals are cleared during a round on every client, because a red
 
 The seeker hunts with **`WEAPON_NS_SHOTGUN`**, a custom stungun-class shotgun shipped inside this resource (`weapons/*.meta` + `stream/w_sg_ns_shotgun.*`). There is no separate weapon resource to install. It is flagged `NonLethal`, so a hit stuns instead of killing, and its ammo type recharges on its own.
 
-The gun itself is not a setting, and lives in `shared/tuning.lua`. A find is decided by the damage event's weapon hash, and a stungun-class weapon only produces that event at full damage — retune it and hits round to nothing, the engine drops the attribution, and nobody is ever found.
+The gun itself is not a setting. A find is decided by the damage event's weapon hash, and a stungun-class weapon only produces that event at full damage — retune it and hits round to nothing, the engine drops the attribution, and nobody is ever found. So the weapon and its damage are fixed.
 
 ### ⚠️ If you run an inventory, register it as an item
 
@@ -198,3 +212,7 @@ All gated behind `Config.Debug`, which ships off.
 **`/chamalign`** — from inside the painter, asks whether the statue the painter is showing matches the pose the body is actually in, and draws both origins so a wrong one reads as displaced or turned at a glance.
 
 **`/chamwhistle [metres] [bearing]`** — play a whistle from a given direction, to hear the spatial audio without a second player.
+
+**`/chamremote [seconds]`** — run it on the screen that is *watching* somebody. It picks the nearest other player and measures their body from your machine: which of our clips they are wearing, whether they are pinned in place, which way their skeleton faces against their entity, and how far each bone drifts over the window. A hider on a wall should read zero everywhere. It exists because a body can only look wrong from a camera its owner is not sitting behind.
+
+**`/chamwho`** — name every ped and object within three metres, with model, visibility and alpha. The answer to "there is something else standing where I am standing", which is what a stray statue or an unhidden body looks like from the outside.
