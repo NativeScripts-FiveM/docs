@@ -173,6 +173,8 @@ Everything is in `config.lua`, with a comment on every value. The main parts:
   - `clear`: the main inventory is emptied.
   - `keep`: nothing is lost.
 
+  **When** (`Config.Death.DropOn`): `'down'` (default) — the moment the player goes down; a qb last stand counts, and a revive does not bring the items back. `'dead'` — only once the framework says dead (the last stand ran out, or killed again while down), so a player revived in time loses nothing.
+
   Protected is always kept. Deaths are confirmed by the server itself, so a client cannot hide one.
 - **Combat lock** (`Config.CombatLock`): hitting or being hit by a weapon locks both players for a few seconds.
   - Items can still come **into** the main inventory, but nothing can leave it: no Protected, no stash, no give.
