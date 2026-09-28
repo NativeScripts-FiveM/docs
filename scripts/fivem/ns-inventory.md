@@ -11,6 +11,7 @@ Framework: **QBCore**. ns-inventory replaces qb-inventory and answers qb-invento
 - **Hotbar** with 7 slots (keys 1–7). Hover an item and press a number to bind it.
 - **Loadouts.** Save the kit you carry, take it back from your stash in one click, and share it as a code (`K7Q-4ZP`). A code copies the list, never the items.
 - **Fast trade.** Give to a nearby player or any server ID from one dialog, with a trades history.
+- **Item count limit.** Right-click an item to set the most you want of it in the inventory. Taking from a stash or Protected then stops there, so nobody pulls too many weapons by accident. Lootbags, gives and admin gives are not limited.
 - **Weapons.** The inventory is the only source of weapons. Attachments, tints and finishes come from a right-click menu and are remembered per weapon type. Default attachments and a launcher-spam cooldown are configurable.
 - **Ammo** runs in one of two modes: fixed ammo (nothing to manage) or tracked ammo (rounds belong to the weapon, reloading uses ammo items).
 - **Personal settings:** accent color, background, card size, fonts and styles, tier colors. They are saved per player.
