@@ -34,7 +34,6 @@ Framework: **QBCore**. ns-inventory replaces qb-inventory and answers qb-invento
 
 **For the server owner**
 - **Discord logs** with separate channels for admin actions and security.
-- **Dupe watch:** a player gaining an unusual amount of an item from others is flagged, with where it came from.
 - **Migration** from qb / ps / lj / qs / codem-inventory, ox_inventory and gfx-inventory.
 - **Season wipe** with a full backup first.
 - **8 languages:** English, Turkish, German, French, Spanish, Portuguese (Brazil), Polish, Italian.
@@ -157,7 +156,6 @@ Everything is in `config.lua`, with a comment on every value. The main parts:
 | `Config.Loadouts` | How many loadouts a player keeps; share codes |
 | `Config.OpenLock` | Keep the inventory closed while dead |
 | `Config.Discord`, `Config.Logs` | Discord logs and how long the audit log is kept |
-| `Config.DupeWatch` | Dupe watch limits |
 | `Config.SeasonWipe`, `Config.Migration` | Season wipe and migration |
 | `Config.Admin` | Panel command, item commands, moderator gives, give notifications |
 | `Config.UI`, `Config.Sounds` | Default accent color and fonts; sounds |
@@ -234,14 +232,6 @@ Do it with **nobody on the server**: kick everyone or close it to players first.
 - `invseason run season2` wipes. Every row is first copied to `ns_inventory_wipe_backup` under that name.
 - `Config.SeasonWipe.Date = '2026-11-01 18:00'` wipes once at that time, or at the next start if the server was off then. Pick a time the server is closed, e.g. your scheduled restart.
 - `Config.SeasonWipe.Stashes = false` keeps stashes and wipes only what players carry.
-
-## Dupe watch
-
-Items a player gets from **others** are counted per item: gives, other stashes, lootbags, and other scripts' AddItem. More than `Config.DupeWatch.Limits` within `Window` raises a flagged Security log and a Discord message saying how much and from where.
-
-- Moves between a player's own containers and admin gives never count.
-- A server-wide check (`ServerHour`) catches a broken shop or job script feeding everyone.
-- Nothing is blocked: it only tells you where to look.
 
 ## Item pictures
 
