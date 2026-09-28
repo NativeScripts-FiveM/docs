@@ -101,17 +101,43 @@ Every panel action is written to the Logs screen and, if set up, to Discord.
 
 ## Commands
 
+### In game
+
 | Command | Who | What it does |
 |---|---|---|
-| `/invadmin` | staff | Open the admin panel |
-| `/giveitem <id\|me> [inventory\|protected\|stash] <item> [count]` | console, or staff with *Give items* | Give an item. `stash` = that character's personal stash; a citizen ID works for offline characters |
-| `/removeitem <id\|me> [inventory\|protected\|stash] <item> [count\|all]` | console, or staff with *Move and remove items* | Remove an item |
-| `nsinvsave` | console, or any staff | Save everyone now, e.g. before a restart |
-| `nsinvdiscord` | console, or admin | Show the Discord setup and send one test message per log category |
-| `nsinvmigrate` / `nsinvmigrate run` | console, or superadmin | Report / run the move from another inventory |
-| `nsinvseason` / `nsinvseason run <name>` | console, or superadmin | Report / run a season wipe |
+| `/invadmin` | staff | Opens the admin panel |
+| `/giveitem <id> [container] <item> [count]` | staff with *Give items* | Gives an item |
+| `/removeitem <id> [container] <item> [count\|all]` | staff with *Move and remove items* | Removes an item |
 
-The names of `/invadmin`, `/giveitem`, `/removeitem` and the console commands can be changed in `config.lua` if another script already uses them.
+- `<id>`: a player's server ID, or `me` for yourself.
+- `[container]`: `inventory` (default), `protected` or `stash`. `stash` is that character's personal stash, and only with `stash` can `<id>` also be a citizen ID, for a character who is offline.
+- `[count]`: how many, 1 if left out. `/removeitem` also takes `all`.
+- Gives ignore weight limits; a remove takes all of it or nothing. Every use is logged.
+
+```text
+/giveitem 12 weapon_pistol
+/giveitem me stash bandage 10
+/removeitem 12 protected weapon_pistol all
+```
+
+Both item commands also work from the server console (without the `/`).
+
+### Server console
+
+Type these in the server console (txAdmin's Live Console works too). The superadmin can also use them in game.
+
+| Command | What it does | When to use it |
+|---|---|---|
+| `invsave` | Saves every online player and every changed stash right now | Before a restart. Any staff member can use it in game too |
+| `invdiscord` | Prints the Discord setup it found and posts one test message per log category | After setting the webhooks. Admins can use it in game too |
+| `invmigrate` | **Report only** — what would move from your old inventory, what is skipped and why. Changes nothing | Before `invmigrate run` |
+| `invmigrate run` | Moves every character and old stash from your old inventory at once | Once, after installing — **server empty** |
+| `invseason` | **Report only** — what a season wipe would empty and what it keeps. Changes nothing | Before `invseason run` |
+| `invseason run <name>` | The season wipe. `<name>` labels the backup, e.g. `invseason run season2` | **Server empty** |
+
+> **Run `invmigrate run` and `invseason run` with nobody on the server.** They read and write every character in the database in one go, which on a big server can freeze it for a few seconds. Kick everyone or close the server to players, run the command, wait for the result in the console, then open again. The reports read everything too, so they are best run on an empty server as well.
+
+Every command name can be changed in `config.lua` if another script already uses it: `Config.Admin.Command`, `Config.Admin.ItemCommands`, `Config.Save.Command`, `Config.Discord.TestCommand`, `Config.Migration.Command` and `Config.SeasonWipe.Command`.
 
 ## Configuration
 
@@ -174,7 +200,7 @@ set ns_inventory:webhook:security "https://discord.com/api/webhooks/..."   # sec
 
 A category without its own webhook uses the default one. `Config.Discord.Categories` turns categories on and off: security, admin, settings, trade, stash, death, lootbag, delete, loadout. It also sets each category's channel and color, and whether it pings `MentionRole`.
 
-Run `nsinvdiscord` in the console to check the setup: it prints what it found and posts one test message per category.
+Run `invdiscord` in the console to check the setup: it prints what it found and posts one test message per category.
 
 ## Languages
 
@@ -189,9 +215,9 @@ Set `Config.Locale` to one of: `en`, `tr`, `de`, `fr`, `es`, `pt`, `pl`, `it`. E
 Supported: **qb-inventory, ps-inventory, lj-inventory, qs-inventory, codem-inventory, ox_inventory, gfx-inventory**. Their tables are only read, never changed.
 
 - **Automatically:** the first time a character loads here, its old items come over. A gfx-inventory row also brings its protected items and its stash.
-- **All at once**, offline characters and old stashes too, from the server console:
-  - `nsinvmigrate` shows a report of what would move, what is skipped and why.
-  - `nsinvmigrate run` moves it. Every old row moves only once, so running it again adds nothing.
+- **All at once**, offline characters and old stashes too, from the server console — with **nobody on the server**:
+  - `invmigrate` shows a report of what would move, what is skipped and why. It changes nothing.
+  - `invmigrate run` moves it. Every old row moves only once, so running it again adds nothing.
 - **Old stashes** go to their owner's personal stash, or to the shared stash with the same id. Trunks and gloveboxes are not moved.
 - **Items your server does not define** are left out and listed: add them first, then run it.
 - **Weapons** keep their rounds only.
@@ -200,9 +226,11 @@ Supported: **qb-inventory, ps-inventory, lj-inventory, qs-inventory, codem-inven
 
 A fresh start for everyone: every inventory, Protected, personal and shared stash and lootbag is emptied, except the items in `Config.SeasonWipe.Keep`.
 
-- `nsinvseason` shows a report of what would be wiped and what is kept.
-- `nsinvseason run season2` wipes. Every row is first copied to `ns_inventory_wipe_backup` under that name.
-- `Config.SeasonWipe.Date = '2026-11-01 18:00'` wipes once at that time, or at the next start if the server was off then.
+Do it with **nobody on the server**: kick everyone or close it to players first.
+
+- `invseason` shows a report of what would be wiped and what is kept. It changes nothing.
+- `invseason run season2` wipes. Every row is first copied to `ns_inventory_wipe_backup` under that name.
+- `Config.SeasonWipe.Date = '2026-11-01 18:00'` wipes once at that time, or at the next start if the server was off then. Pick a time the server is closed, e.g. your scheduled restart.
 - `Config.SeasonWipe.Stashes = false` keeps stashes and wipes only what players carry.
 
 ## Dupe watch
