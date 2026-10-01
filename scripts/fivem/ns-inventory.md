@@ -235,7 +235,7 @@ Do it with **nobody on the server**: kick everyone or close it to players first.
 
 ## Item pictures
 
-Put pictures in `images/items/`, named after the item (`phone.webp`) or after your framework's `image` field (`phone.png`). WebP is smallest; PNG, JPG and GIF work too. Weapons already have pictures. Items without one show a placeholder.
+Put pictures in the `images/` folder, named after the item (`phone.webp`) or after your framework's `image` field (`phone.png`). WebP is smallest; PNG, JPG and GIF work too. Weapons already have pictures, and a picture of yours with the same name replaces the built-in one. Items without a picture show a placeholder.
 
 ## For developers
 
