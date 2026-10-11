@@ -321,13 +321,7 @@ Do it with **nobody on the server**: kick everyone or close it to players first.
 
 Put pictures in the `images/items/` folder, named after the item (`phone.webp`) or after your framework's `image` field (`phone.png`). WebP is smallest; PNG, JPG and GIF work too. Every GTA weapon already has a picture there; a picture of yours with the same name replaces it. Items without a picture show a placeholder.
 
-On QBCore, bring your item pictures over from your old inventory (qb-inventory keeps them in `html/images/`). Copying them as they are works. To make them smaller, convert the folder to WebP (needs Node.js and ffmpeg):
-
-```text
-node tools/import-icons.js "C:/path/to/qb-inventory/html/images"
-```
-
-It writes `images/items/<name>.webp` and skips pictures that are already there (`--force` replaces them). A picture added while the server runs shows after a restart of ns-inventory.
+On QBCore, copy your item pictures from your old inventory (qb-inventory keeps them in `html/images/`) into `images/items/`. They work as they are: an item's `image` field (`phone.png`) is found as well as its name. A picture added while the server runs shows after a restart of ns-inventory.
 
 ## For developers
 
