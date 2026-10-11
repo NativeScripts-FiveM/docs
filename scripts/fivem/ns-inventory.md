@@ -9,13 +9,16 @@ Runs **on its own, with no framework** (standalone), or on **QBCore** when it fi
 **For players**
 - **Inventory + Protected.** The main inventory is lost on death (see [Death](#death-lootbags-and-the-combat-lock)); Protected is always kept.
 - **Hotbar** with 7 slots (keys 1–7). Hover an item and press a number to bind it.
-- **Loadouts.** Save the kit you carry, take it back from your stash in one click, and share it as a code (`K7Q-4ZP`). A code copies the list, never the items.
+- **Loadouts.** Save the kit you carry, take it back from your stash in one click, and share it as a code (`K7Q-4ZP`). A loadout can also set your hotbar slots. A code copies the list, never the items.
 - **Fast trade.** Give to a nearby player or any server ID from one dialog, with a trades history. Nobody is picked until you pick; two quick buttons fill in half or a quarter of the stack. The people you traded with since joining are one click away, under the server ID they have now (the list starts empty on every join). The nearby list refreshes once per `Config.Give.RefreshCooldown` seconds. Both players get a dated notification.
+- **Sorting, favorites and priority.** Sort a section by priority, type, name or count; click the active sort again to turn sorting off. Right-click › **Prioritize** puts an item first (the latest one on top), and **Favorites** come right after.
+- **Deposit.** With a stash open, one button puts everything into it, or everything except your favorites and prioritized items. It shows what would not fit before anything moves.
+- **Weight at a glance.** Click a section's weight to see its heaviest items. Pointing at an item shows its details (Settings › Item details turns that off).
 - **Item count limit.** Right-click an item to set the most you want of it in the inventory. Taking from a stash or Protected then stops there, so nobody pulls too many weapons by accident. Lootbags, gives and admin gives are not limited.
 - **Weapons.** The inventory is the only source of weapons. Attachments, tints and finishes come from a right-click menu and are remembered per weapon type. Default attachments and a launcher-spam cooldown are configurable. An empty weapon stays in hand until it is reloaded. Grenades, sticky bombs, molotovs and other throwables come out with as many as the stack holds; each one thrown takes one item.
 - **Ammo** runs in one of two modes: fixed ammo (nothing to manage) or tracked ammo (rounds belong to the weapon, reloading uses ammo items). One ammo item loads one magazine of the weapon in hand — an extended or drum clip loads more (`Config.Ammo.RoundsPerItem = 'clip'`, the game's own magazine sizes). Every gun and launcher can be item-fed (RPG, Homing Launcher, Grenade Launcher, Minigun, Railgun, Firework, Flare Gun…); the ammo items qb-core lacks are added at start (`Config.Ammo.AddItems`), and no weapon loads more than GTA itself keeps in it. Reload with **R** or by using an ammo item; ammo is taken from the inventory first, then from Protected (`Config.Ammo.FromProtected`). With tracked ammo a weapon card shows the rounds loaded in that weapon, and nothing when it is empty; two equal weapons holding different rounds are two stacks; turn tracking off and they stack again.
 - **Usable items with a progress bar** (`Config.UseItems`): armour, medkits, bandages… set the time, health, armour, animation and cooldown per item. The item is taken only when the bar has run.
-- **Personal settings:** language, accent color, background, card size, fonts and styles, tier colors, and swapping the left and right mouse buttons. They are saved per player; **Reset** puts them all back except the language. The language covers the inventory and the panel; messages from the server stay in `Config.Locale`.
+- **Personal settings:** language, accent color, background, item size, item details, split amount (how many `SHIFT` + click moves), fonts and styles, tier colors, and swapping the left and right mouse buttons. They are saved per player; **Reset** puts them all back except the language. The language covers the inventory and the panel; messages from the server stay in `Config.Locale`.
 - **Notifications** in GTA's feed style, bottom left, always on screen: inventory open or not, and whatever your HUD does with the minimap (`Config.Notifications = 'gta'` uses GTA's own feed instead).
 - **Walk with the inventory open** (`Config.MoveWhileOpen`). Mouse look, attack and aim stay off, and typing in a search box never walks.
 
@@ -36,6 +39,7 @@ Runs **on its own, with no framework** (standalone), or on **QBCore** when it fi
 - **Economy:** how many of each item exist on the server and how that changed over 24 h / 7 days, and who holds them.
 - **Staff:** one superadmin adds admins and moderators and switches single permissions per person.
 - **Live settings** (Items, Weapons & loadout, Stashes, Lootbags, Limits): change weights, tiers, limits, stash locations and NPCs, starter items, the free loadout and the lootbag's look without a restart.
+- **Search the panel:** type a setting, an item or a screen name to jump to it, or search players and logs for the text.
 
 **For the server owner**
 - **Starter items** a new character gets once, on its first login (`Config.StarterItems`, or later from your own script).
@@ -112,6 +116,8 @@ Open it with `/invadmin`. What each role can do:
 
 **Live settings.** Most of `config.lua` can also be changed in the panel (Items, Weapons & loadout, Stashes, Lootbags, Limits). A value saved there wins over `config.lua`. If you change `config.lua` and nothing happens, check the panel: fields that differ from the config are marked, and **Reset to config** goes back to `config.lua`. Only the superadmin can reset.
 
+**One editor at a time.** An offline character is edited by one staff member at a time; anyone else who opens it meanwhile sees it view only, with the name of who holds it. Online players are edited live, so their changes never clash.
+
 Every panel action is written to the Logs screen and, if set up, to Discord.
 
 ## Commands
@@ -165,6 +171,8 @@ Everything is in `config.lua`, with a comment on every value. The main parts:
 | `Config.OpenKey`, `Config.MoveWhileOpen` | The inventory key; walking while it is open |
 | `Config.Notifications` | `'nui'` (always on screen) or `'gta'` (GTA's own feed) |
 | `Config.Containers`, `Config.Weights` | How much the inventory and Protected hold (grams); weights on or off |
+| `Config.Delete` | Whether players can delete items (right-click › Delete; every delete is logged) |
+| `Config.Save` | How often changed characters and stashes are written (they are also written at once on logout, death, gives and resource stop); the `invsave` command |
 | `Config.Death`, `Config.Lootbag` | What death does: `lootbag`, `clear` or `keep`; your death script's events; deaths that cost nothing (`Keep`); the bag's lifetime, model, marker, effect, and whether players can put items in |
 | `Config.StarterItems` | What a new character gets once, on its first login, where (inventory or Protected), and once per account or per character |
 | `Config.FreeLoadout` | The kit a player gets back on every respawn after a death that took the inventory |
@@ -486,4 +494,4 @@ All three go when ns-inventory restarts: on its `onResourceStart`, set them agai
 | Nothing is saved / "no database" in the console | Start oxmysql or mysql-async before ns-inventory |
 | A qb shop does not open | Shops are not supported yet (see above) |
 
-For extra console output and the test commands `/giverandom` and `/testlootbag`, set `Config.Debug = true`. Keep it off on a live server.
+For extra console output and the test commands `/giverandom` and `/testlootbag`, set `Config.Debug = true`. Keep it off on a live server. To follow deaths and lootbags on a live server for a while, `set ns_inventory_debug 1` in the server console turns the extra output on without a restart (`0` turns it off).
