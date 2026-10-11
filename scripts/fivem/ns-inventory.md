@@ -317,6 +317,25 @@ Do it with **nobody on the server**: kick everyone or close it to players first.
 - `Config.SeasonWipe.Date = '2026-11-01 18:00'` wipes once at that time, or at the next start if the server was off then. Pick a time the server is closed, e.g. your scheduled restart.
 - `Config.SeasonWipe.Stashes = false` keeps stashes and wipes only what players carry.
 
+## Adding items
+
+**On QBCore** ns-inventory has no item list of its own: it reads qb-core's (`QBCore.Shared.Items`).
+
+1. Add the item to `qb-core/shared/items.lua` as usual:
+   ```lua
+   lockpick2 = { name = 'lockpick2', label = 'Lockpick+', weight = 300, type = 'item', image = 'lockpick2.png', unique = false, useable = true, shouldClose = true, description = '' },
+   ```
+2. Put its picture in `ns-inventory/images/items/` (see [Item pictures](#item-pictures)).
+3. Restart the server: qb-core reads that file only when it starts.
+
+Items another resource adds while the server runs (`exports['qb-core']:AddItem` / `AddItems`) show up in ns-inventory within a second, with no restart.
+
+**Standalone** the items are in ns-inventory's own `items.lua`: `label`, `weight` (grams) and an optional `image`. Restart ns-inventory after a change. In the escrow edition this file stays editable.
+
+**Either way:**
+- **Weight and tier** (the card color): the panel's **Items** screen changes them live, or set them in `Config.ItemWeights` / `Config.ItemTiers`. Both win over the framework's values.
+- **Usable items:** your framework's callback (`QBCore.Functions.CreateUseableItem`), `exports['ns-inventory']:registerUsableItem`, or `Config.UseItems` for a progress bar (see [Usable items](#usable-items)).
+
 ## Item pictures
 
 Put pictures in the `images/items/` folder, named after the item (`phone.webp`) or after your framework's `image` field (`phone.png`). WebP is smallest; PNG, JPG and GIF work too. Every GTA weapon already has a picture there; a picture of yours with the same name replaces it. Items without a picture show a placeholder.
