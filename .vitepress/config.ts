@@ -96,6 +96,7 @@ export default defineConfig({
       { text: '🖼️ ns-poster', link: '/scripts/fivem/ns-poster' },
       { text: '🎁 ns-kits', link: '/scripts/fivem/ns-kits' },
       { text: '🎒 ns-inventory', link: '/scripts/fivem/ns-inventory' },
+      { text: '💀 ns-killeffects', link: '/scripts/fivem/ns-killeffects' },
     ],
 
     socialLinks: [
