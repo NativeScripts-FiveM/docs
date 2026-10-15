@@ -6,7 +6,7 @@ and everything — anim shop, badges, avatars, platform placement — is driven 
 
 Yellow / dark cyber UI (Chakra Petch), rendered to an in-world DUI surface.
 
-> Full docs: **https://fivem.nativescripts.com/docs/**
+> Full docs: **https://nativescripts.com/docs**
 
 ---
 

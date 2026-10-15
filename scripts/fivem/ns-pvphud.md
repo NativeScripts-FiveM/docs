@@ -95,4 +95,4 @@ server-owner defaults and behaviour:
 | `Config.SettingsCommand` / `Config.SettingsKey` | Menu command (`/hudsettings`) and an optional keybind (none by default) |
 | `Config.Debug` | Dev logging + `/killtest` / `/killreset` — **set `false` before release** |
 
-Docs: https://fivem.nativescripts.com/docs/
+Docs: https://nativescripts.com/docs

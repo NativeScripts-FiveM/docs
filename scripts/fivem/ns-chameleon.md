@@ -16,7 +16,7 @@ Cross-framework — **ESX · QBCore · Qbox · vRP 1.x · standalone**. The fram
 
 **No hard dependencies.** It declares none, so it cannot refuse to start because something is missing. `ox_lib` is used for nicer notifications if you happen to have it.
 
-Docs: <https://fivem.nativescripts.com/docs>
+Docs: <https://nativescripts.com/docs>
 
 ---
 

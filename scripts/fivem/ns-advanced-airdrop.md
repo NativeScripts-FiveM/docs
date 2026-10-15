@@ -321,4 +321,4 @@ tool, and all nine languages are already translated in full.
 
 ## Documentation
 
-Full docs: <https://fivem.nativescripts.com/docs/>
+Full docs: <https://nativescripts.com/docs>

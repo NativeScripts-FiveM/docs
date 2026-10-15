@@ -489,7 +489,7 @@ DELETE FROM ns_kits_claims WHERE kit_id = 'starter';          -- let everyone cl
 /kitdebug   -- admin-only Discord/role diagnostic (server console)
 ```
 
-Docs: https://fivem.nativescripts.com/docs/
+Docs: https://nativescripts.com/docs
 
 ## License
 
