@@ -12,7 +12,7 @@ Yellow / dark cyber UI (Chakra Petch), rendered to an in-world DUI surface.
 
 ## Features
 
-- **Podium peds + crowns** — the top-9 of each board spawn in-world as frozen NPCs wearing the real player's skin + chosen animation. Gold / silver / bronze crown on the top-3 (only on the podium ped — never attached to a live player). Name floats above each ped in the player's chosen colour (DrawText3D, no NUI overlay).
+- **Podium peds + crowns** — the top-9 (large podium) or top-5 (small podium) of each board spawn in-world as frozen NPCs wearing the real player's skin + chosen animation. Gold / silver / bronze crown on the top-3 (only on the podium ped — never attached to a live player). Name floats above each ped in the player's chosen colour (DrawText3D, no NUI overlay).
 - **Multiple boards** — `kill`, `death`, `playedtime`, `kd`, and `point` (from cash). Each board is its own podium; enable/place only the ones you want.
 - **Live podium recolour** — one admin command (`/nspodiumcolor <colour>`) retints the podium **and** the signs (TOP KILLS / DEATHS / TIME / POINTS) in real time for everyone. 7 built-ins (yellow, blue, green, red, orange, purple, pink); the choice is saved server-side and persists across relogs and restarts. One model, no restart — a runtime texture is swapped in.
 - **Real-time, low-overhead updates** — a diff push (1s debounce) plus a surgical client update: when one player changes skin/anim or the ranking shifts, only the ped that actually changed re-spawns — not the whole podium, and not for everyone.
@@ -84,7 +84,7 @@ Podium positions live in **`data/platforms.json`**, written by the in-game tool 
 ```
 /nsplatform-tool kill
 ```
-`<type>` is one of `kill · death · playedtime · kd · point`. You position **only the platform** with the mouse gizmo; the sign and all 9 ped slots auto-place from `Config.PlatformTemplate`. Modes:
+`<type>` is one of `kill · death · playedtime · kd · point`. You position **only the platform** with the mouse gizmo; the sign and every ped slot auto-place from that podium size's template in `Config.PodiumModels`. Modes:
 
 | Mode | Command | What it does |
 |---|---|---|
@@ -94,6 +94,20 @@ Podium positions live in **`data/platforms.json`**, written by the in-game tool 
 | **edit** | `/nsplatform-tool kill edit` | re-open the current placement; ←/→ pick a piece, **E** grab with the gizmo, **Enter** save all |
 
 The result is **saved to JSON and live-reloads for every player instantly** — no restart, no pasting.
+
+**Podium size — large or small.** Two podium models ship with the resource:
+
+| Size | Model | Players | Footprint |
+|---|---|---|---|
+| `large` (default) | `mertrix_leader` | 9 | ~11.1 × 4.7 m, 3.7 m tall |
+| `small` | `ns_podium_small` | 5 | ~6.9 × 3.0 m, 3.0 m tall |
+
+`Config.PodiumSize` picks the size for new placements. Add `small` or `large` to the tool command to choose per podium — each placement remembers its own size, so you can mix them:
+```
+/nsplatform-tool kill small          -- place (or re-place) the kill podium as the small one
+/nsplatform-tool death manual large  -- the size works together with any mode
+```
+A podium shows `min(Config.PlatformPlayerCount, slots)` players, so a small podium shows the top 5. The board's sign (TOP KILLS / TOP DEATHS / TOP TIME / TOP POINTS) comes with either size — on the small podium it stands on the centre back wall — and recolours with `/nspodiumcolor` as usual. Placements saved before this option existed load as `large`.
 
 **Gizmo controls:** mouse = drag handles · **W** move · **R** rotate · **Q** world/local · **LAlt** snap to ground · **Enter** confirm · **Backspace** cancel.
 
@@ -125,6 +139,8 @@ Applies live to everyone, retints both the podium accent and all signs, and is s
 | Columns | `Config.Columns` | toggle each column: `crew, kill, death, kd, playtime, point` |
 | Point | `Config.PointMoneyType` | wallet the POINT board reads (default `cash`) |
 | Platform | `Config.PlatformEnabled[type]` | which boards are active |
+| Platform | `Config.PodiumSize` | size for new placements: `large` (9 players) or `small` (5 players) |
+| Platform | `Config.PodiumModels` | model, slot count and sign/ped placement template per size |
 | Platform | `Config.SignModels[type]` | sign prop per type (`false` = no sign) |
 | Platform | `Config.PlatformLabelDistance` | how far (m) the ped name labels show (default 15) |
 | Platform | `Config.PlatformStreamDistance` | spawn a podium only for players within this many m; `0`/`false` = always (default 150) |
