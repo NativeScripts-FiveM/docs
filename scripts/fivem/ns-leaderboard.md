@@ -144,6 +144,8 @@ Applies live to everyone, retints both the podium accent and all signs, and is s
 | Platform | `Config.SignModels[type]` | sign prop per type (`false` = no sign) |
 | Platform | `Config.PlatformLabelDistance` | how far (m) the ped name labels show (default 15) |
 | Platform | `Config.PlatformStreamDistance` | spawn a podium only for players within this many m; `0`/`false` = always (default 150) |
+| Crown | `Config.CrownHeight` | crown height (m) above the podium ped's origin (default `0.92`) |
+| Crown | `Config.CrownForward` | crown shift (m) along the ped's facing: `+` forward, `-` back (default `0.0`) |
 | Podium colour | `Config.PodiumColors` | key → label map for `/nspodiumcolor` (add a colour = a PNG + a line) |
 | Podium colour | `Config.PodiumDefaultColor` | colour used before an admin sets one (default `yellow`) |
 | Anim | `Config.Animations` | the anim-shop catalogue (see below) |
