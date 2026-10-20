@@ -91,9 +91,25 @@ add_ace group.admin ns.airdrop.admin allow
 
 ## Admin permission
 
-Access is granted by the ACE object `ns.airdrop.admin`. If the ACE check fails, the
-resource falls back to the framework group (`admin` / `superadmin` by default,
-configurable in `Config.Admin.frameworkGroups`).
+Access is granted by the ACE object `ns.airdrop.admin`. Being a member of `group.admin`
+is **not** enough on its own: group membership is not an ACE, so the
+`add_ace group.admin ns.airdrop.admin allow` line from the installation steps is
+required. To allow a single player instead, use their identifier:
+
+```cfg
+add_ace identifier.license:xxxxxxxx ns.airdrop.admin allow
+```
+
+If the ACE check fails, the resource falls back to the framework group listed in
+`Config.Admin.frameworkGroups` (`admin` / `superadmin` by default):
+
+- **ESX** — the player's ESX group.
+- **QBCore / Qbox / standalone** — the bare `admin` or `mod` ACE. QBCore grants these to
+  its own `qbcore.admin` / `qbcore.mod` principals; Qbox and standalone servers only
+  have them if server.cfg grants them.
+
+When a player is refused, the server console prints the exact `add_ace` line that
+would allow them.
 
 ---
 
