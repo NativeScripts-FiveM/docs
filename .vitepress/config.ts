@@ -98,6 +98,7 @@ export default defineConfig({
       { text: '🎒 ns-inventory', link: '/scripts/fivem/ns-inventory' },
       { text: '💀 ns-killeffects', link: '/scripts/fivem/ns-killeffects' },
       { text: '🪂 ns-advanced-airdrop', link: '/scripts/fivem/ns-advanced-airdrop' },
+      { text: '🪧 ns-homelessjob', link: '/scripts/fivem/ns-homelessjob' },
     ],
 
     socialLinks: [
