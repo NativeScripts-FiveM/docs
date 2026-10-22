@@ -23,7 +23,9 @@ runtime, nothing to configure.
    drop it (**Backspace** cancels and takes you back to the list). Your
    character then walks over and puts it together, kneeling and working on
    the ground for four seconds (`Config.Placement.Build`; **Backspace**
-   stops). Two
+   stops). Packing up later (**Pack up** or `/hjpack`) is the same work the
+   other way round: walk over, kneel, three seconds (`Config.Placement.Pack`).
+   Two
    beggars cannot set up right next to each other, and server owners can
    block areas (police stations, hospitals).
 3. **Stand by your cup.** There is no sitting: you work standing next to your
@@ -35,13 +37,15 @@ runtime, nothing to configure.
    10 seconds, and the setup is packed away (`Config.Placement`).
 4. **Write a sign (optional).** Right after you set up, the game's help box
    says *Press F7 to write on the cardboard*, and **F7** opens the **Sign**
-   tab: the board preview on top and four tools under it — **Write** (text
+   tab: the board preview on top and five tools under it — **Write** (text
    pieces, up to four: type each one, drag it anywhere on the board, turn it
    with its round handle — **Shift** snaps to 15° — and pick its size and
    colour), **Draw** (click and drag on the board with a marker:
    nine colours, thin or thick, undo, clear), **Stickers** (add an arrow,
    heart, dollar… and drag it where you want it, small / medium / large, up
-   to four) and **Board** (cardboard, pizza box or plywood). Then **Write on
+   to four), **Board** (cardboard, pizza box or plywood) and **Ready** (six
+   ready-made signs such as *Anything helps* or *Will work for food*: one
+   click fills the board, then change anything you like). Then **Write on
    the cardboard**, and your character writes it with a pencil. Text and
    drawing appear on the board only once you finish writing, exactly where
    you drew them, for everyone around. The writing faces the people reading
@@ -109,7 +113,7 @@ runtime, nothing to configure.
    models, animations and pedestrian models actually exist on your build, so you
    can fix `config.lua` from measurements instead of guesses.
 
-The admin commands (`/hjedit`, `/hjclear`, `/hjlevel`, `/hjreset`) need
+The admin commands (`/hjedit`, `/hjclear`, `/hjlevel`) need
 the `admin` ACE. On QBCore / Qbox that is not automatic for `group.admin`:
 add `add_ace group.admin admin allow` to `server.cfg`. They are also
 restricted commands, so on ESX give the group `command.<name>` (or `command`).
@@ -136,8 +140,7 @@ gizmo is on screen. The three player commands can be renamed in
 | `/hjprobe` | everyone | Report which configured assets exist on this build |
 | `/hjedit` | admin | Lay a setup out with the mouse gizmo (cup, props, cardboard), then save for everyone |
 | `/hjclear [id]` | admin | Clear one setup, or all of them |
-| `/hjlevel <id> <level>` | admin | Raise a player to a level |
-| `/hjreset <id>` | admin | Wipe a player's level progress |
+| `/hjlevel <id> <level>` | admin | Set a player to a level, up or down |
 
 `<id>` is the player's server ID. The admin commands also work from the server
 console, without the slash (`hjlevel 5 3`); in game they need the `admin` ACE
@@ -147,13 +150,13 @@ console, without the slash (`hjlevel 5 3`); in game they need the `admin` ACE
 
 A level is not stored: it is worked out from three lifetime numbers per
 character — `donations` (everyone who paid you), `earned` (what they paid) and
-`minutes` (time spent working a setup). `/hjlevel` only ever raises those
-numbers to what the level asks for, so it cannot take a level away.
+`minutes` (time spent working a setup).
 
-- **Raise:** `/hjlevel <id> <level>`.
-- **Lower (player online):** `/hjreset <id>` (back to level 1), then
-  `/hjlevel <id> <level>` (up to the level you want).
-- **Lower or set exact numbers (player offline):** with a database the numbers
+- **Player online:** `/hjlevel <id> <level>` sets those three numbers to exactly
+  what that level asks for in `Config.Levels`, so it raises or lowers the
+  player. A level above the top one sets the top level; `/hjlevel <id> 1`
+  starts the player over from zero.
+- **Player offline:** with a database the numbers
   live in the `ns_homelessjob_progress` table, one row per character
   (`identifier` = `citizenid` on QBCore / Qbox, the character identifier on
   ESX). Set them to the `requires` of the level you want from
@@ -232,6 +235,14 @@ distances and the timings that keep payouts honest — lives in
 of those values, copy the key into `config.lua` under the same name; yours
 wins and everything you leave out keeps its default. Lists (models, colours,
 animations) are taken whole.
+
+The ready-made signs of the **Ready** tab are `Config.Sign.Templates` in the
+same file: where each text piece sits, how big, its colour, plus stickers and
+marker strokes, on the same 0–255 board grid as a player's sign. The words come
+from `templates` in `locales/<code>.lua`, one string per piece (`\n` starts a
+new line); a `t = '...'` on a piece in the config is used instead. To use your
+own, copy `Config.Sign.Templates` into `config.lua` and edit it; an empty list
+hides the tab. A ready-made sign is checked like any other when it is written.
 
 If a prop you add floats above the ground (a tent, a fire pit), its collision
 reaches below the visible model and the game stands it on the collision. Add
