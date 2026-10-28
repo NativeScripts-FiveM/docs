@@ -7,7 +7,7 @@ peer-to-peer (ultra-low latency, media never touches the server) — all framewo
 
 **Standalone**: no framework dependency, no `screenshot-basic`, no external services. Drop it
 in and grant your admins an ACE. Optional framework features (money / job / inventory) light up
-automatically on ESX / QBCore / Qbox / vRP 1.x via the bundled `utils/` layer.
+automatically on ESX / QBCore / Qbox / ND / ox_core / vRP via the bundled `utils/` layer.
 
 ---
 
@@ -20,7 +20,7 @@ automatically on ESX / QBCore / Qbox / vRP 1.x via the bundled `utils/` layer.
 - **Admin panel** — `F6` (rebindable) opens a searchable player list with a per-player
   inspector (identifiers, framework job, money, warns, live entity info).
 - **Moderation** — kick, ban (file-based, survives reconnect), warn (file-based), freeze, heal,
-  revive, goto / bring. Offline ban manager (list / unban / add).
+  revive, kill, goto / bring. Offline ban manager (list / unban / add).
 - **Ticket system** — players open a report with `/report` (a form: pick a category + describe the
   issue); admins work them in a dedicated **ticket dashboard** (open / claimed / resolved tabs,
   draggable, jump-to-id, claim / resolve / spectate / teleport, copy identifiers). Tickets persist
@@ -32,6 +32,12 @@ automatically on ESX / QBCore / Qbox / vRP 1.x via the bundled `utils/` layer.
   time control. A hold-`Left Alt` **two-ring radial** gives quick access to tools + world actions.
 - **ESP overlays** — native name tags with the game's health/armor bar above every player, and
   OneSync-aware map blips (vehicle icon when driving, dot on foot).
+- **Player management** — give / take cash & bank, set job, give an item, and **view any
+  player's inventory** (read-only): items grouped by container with count, slot and metadata
+  (serial, ammo, durability, attachments…). Works with ns-inventory (Inventory / Protected +
+  carry weight), ox_inventory, qb / ps / lj-inventory, qs-inventory, codem, tgiann, origen,
+  core_inventory, jaksam, ak47, wasabi, gfx and more, plus plain ESX (loadout weapons included)
+  and QBCore. Anything else plugs in through `NsAdminBridge.GetInventory`.
 - **Roles & permissions** — tiered access (`admin` / `mod` by default) resolved from ACEs, with
   per-permission gating. Assign roles **live** from the panel (no restart) — grants persist.
 - **Discord audit log** — moderation & management actions are posted to a Discord webhook as a
@@ -228,7 +234,7 @@ add_principal identifier.license:XXXXXXXX group.helper
 | `players` | open the panel + player list + inspector |
 | `reports` | claim / resolve player reports |
 | `evidence` | capture screenshot/clip to Discord |
-| `kick` `warn` `freeze` `heal` `revive` `goto` `bring` | the matching player actions |
+| `kick` `warn` `freeze` `heal` `revive` `kill` `goto` `bring` | the matching player actions |
 | `ban` `banmanager` | ban a player / open the ban manager |
 | `godmode` `invisible` `setModel` `giveWeapon` | dev tweaks on the target |
 | `repairVehicle` `cleanVehicle` `deleteVehicle` | the target's vehicle |
@@ -259,7 +265,7 @@ entirely, so you can map your existing staff system straight onto ns-admin's rol
 ### Owner hooks (`bridge.lua`)
 
 `bridge.lua` exposes optional `NsAdminBridge.*` hooks so you can wire ns-admin into your own
-framework / scripts (custom notify, kick/ban, set job, vehicle keys, role resolution, etc.)
+framework / scripts (custom notify, kick/ban, set job, inventory view, vehicle keys, role resolution, etc.)
 without editing the core. Each hook returns `true` to override the built-in behavior.
 
 ### NAT / TURN
