@@ -40,7 +40,6 @@ Cross-framework: **ESX / QBCore / Qbox**. The framework is detected at runtime (
 | `oxmysql` | Yes |
 | `es_extended` / `qb-core` / `qbx_core` | One of them |
 | `ox_lib` | Only on Qbox |
-| `interact-sound` | No (invites play a sound when it runs) |
 | OneSync | Yes (routing buckets and server-side positions for CvC) |
 
 ## Installation
@@ -121,7 +120,7 @@ Everything is in `config.lua`:
 | `Config.CvC` | Modes, timings, best-of and team sizes, weapon categories, loadout, maps |
 | `Config.CvC.defaultPlayers` | Players per side preselected on the war setup screen (1 = 1v1) |
 | `Config.CvC.pickTime` | Seconds players stand frozen at spawn picking one primary (classes that are not banned) and one pistol; the pick carries over, a slot left alone gets a random allowed weapon each round. `0` gives `defaultLoadout` instead |
-| `Config.CvC.sounds` | Sounds for a received and an accepted war invite (`false` = silent) |
+| `Config.CvC.sounds` | Game sounds for a received crew or war invite and an accepted war invite (`false` = silent) |
 | `Config.CvC.pistols` | Pistols on the pick screen (a class the war setup can ban like any other). Every picked weapon gets the game's maximum ammo. Players also pick attachments there; each weapon keeps its attachments for the next time (saved on the client) |
 | `Config.CvC.blockInventory` | No inventory and no death drop while in a war: ns-inventory through its game-mode exports, ox_inventory / qb-inventory through the `invBusy` / `inv_busy` statebags. Other inventories hook the war events (see [Integration](#integration-inventory-and-loot)) |
 
