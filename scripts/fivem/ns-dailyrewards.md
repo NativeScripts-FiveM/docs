@@ -341,4 +341,4 @@ The resource ships in English. Every line players see is in `locales/en.lua`.
 
 ## License
 
-The Lua, HTML, CSS and JavaScript source is released under the [MIT license](LICENSE). The bundled fonts keep their SIL Open Font License 1.1 (see `html/fonts/README.md`). The Native Scripts name and logo are not part of the license — replace `html/img/logo.png` with your own.
+The Lua, HTML, CSS and JavaScript source is released under the MIT license (see `LICENSE`). The bundled fonts keep their SIL Open Font License 1.1 (see `html/fonts/README.md`). The Native Scripts name and logo are not part of the license — replace `html/img/logo.png` with your own.
