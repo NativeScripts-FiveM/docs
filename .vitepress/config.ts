@@ -100,6 +100,7 @@ export default defineConfig({
       { text: '🪂 ns-advanced-airdrop', link: '/scripts/fivem/ns-advanced-airdrop' },
       { text: '🪧 ns-homelessjob', link: '/scripts/fivem/ns-homelessjob' },
       { text: '⚔️ ns-crew', link: '/scripts/fivem/ns-crew' },
+      { text: '🎁 ns-dailyrewards', link: '/scripts/fivem/ns-dailyrewards' },
     ],
 
     socialLinks: [
