@@ -40,13 +40,12 @@ Cross-framework: **ESX / QBCore / Qbox**. The framework is detected at runtime (
 |---|---|
 | `oxmysql` | Yes |
 | `es_extended` / `qb-core` / `qbx_core` | One of them |
-| `ox_lib` | Only on Qbox |
 | OneSync | Yes (routing buckets and server-side positions for CvC) |
 
 ## Installation
 
 1. Put the folder in `resources/` as **`ns-crew`**. The NUI calls `https://ns-crew/...`, so the folder name must not change.
-2. Run `crew.sql` on your database. It creates seven tables: `ns_crew`, `ns_crew_roles`, `ns_crew_join_requests`, `ns_crew_ex_members`, `ns_crew_announcements`, `ns_crew_war_history`, `ns_crew_activity`. Updating from an older version? Nothing to run: on start the resource renames the old `crew*` tables to the `ns_` names.
+2. Run `crew.sql` on your database. It creates three tables: `ns_crew` (crews, with their roles and join requests), `ns_crew_log` (activity feed, announcements) and `ns_crew_wars` (war results). Updating from an older version? Nothing to run: on start the resource moves the data of the old tables into these three and keeps the old tables as `<name>_old`.
 3. Add to `server.cfg`, after `oxmysql` and your framework:
    ```
    ensure ns-crew
