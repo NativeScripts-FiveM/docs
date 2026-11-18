@@ -20,17 +20,18 @@ Cross-framework: **ESX / QBCore / Qbox**. The framework is detected at runtime (
 - Personal display settings (nametags, distance, colour, blips) in the gear menu, saved per player.
 
 **Crew vs Crew**
-- A leader (or a role with the CvC permission) declares war on another crew: mode, best-of, team size, map and up to four weapon category bans.
+- A leader (or a role with the CvC permission) declares war on another crew: mode, best-of, team size, map and weapon class bans.
 - The invite waits in the other crew's **CvC › Invites** tab. Unanswered invites are declined automatically after 10 minutes.
 - When accepted, both crews see a **Join war** bar in the crew menu for 5 minutes. A side that nobody joins cancels the war.
 - Matches run in their own routing bucket. Players are restored (position, weapons) when they leave or the war ends.
-- **Modes** — every mode is round-based with no respawn; wiping out the other crew always wins the round:
+- **Modes** — every mode is round-based. Classic and Capture the flag have no respawn, and wiping out the other crew wins the round:
   - **Classic** — elimination only.
   - **Capture the flag** — bring the enemy flag to your base. A dropped flag returns home when its owners touch it, or after 15 s.
-  - **Hold the zone** — hold the zone alone for a total of 30 s. Both crews inside pauses the timer. At time-out the crew that held longer wins.
+  - **Hold the zone** — hold a zone alone for a total of 30 s. A map can have up to four zones, and each zone a crew holds alone adds to its timer. Both crews inside a zone pauses that zone. Dead players respawn at their team spawn after 3 s, so the round ends only when a crew takes the zone (safety limit: 15 minutes, the crew that held longer wins).
 - Before each round players pick one primary, one pistol and their attachments. Every weapon comes with maximum ammo, and a slot left alone gets a random allowed weapon.
 - Dead players spectate their alive teammates until the round ends (**LMB / RMB** to switch).
 - Forfeit rules for players who leave mid-war (`Config.CvC.punishFirstRoundQuit`).
+- The final score and the winner are posted in chat to the whole server.
 - Head-to-head history and recent matches per crew.
 
 ## Requirements
@@ -50,7 +51,6 @@ Cross-framework: **ESX / QBCore / Qbox**. The framework is detected at runtime (
    ```
    ensure ns-crew
    ```
-4. Before going live, set `Config.EnableDevCommands = false` in `config.lua`.
 
 ## Commands
 
@@ -62,19 +62,6 @@ Cross-framework: **ESX / QBCore / Qbox**. The framework is detected at runtime (
 | `/cvcleave` | Players in a war | Leave the current war (same rules as the Leave button) |
 | `/cvcmaps` | Admin / mod | Open the CvC map editor |
 
-**Dev commands** — registered only while `Config.EnableDevCommands = true`. The server ones are admin/mod only.
-
-| Command | Side | What |
-|---|---|---|
-| `/crewaddfake [count]` | Server | Add fake members to your crew |
-| `/crewclearfake` | Server | Remove fake members and requests |
-| `/crewfakerequest [count]` | Server | Add fake join requests |
-| `/crewfakestat <kills> [deaths]` | Server | Change your own stats |
-| `/cvcsolo [mode] [map]` | Server | One-player test war against an empty crew (no stats); leave with `/cvcleave` |
-| `/cvcmap <step>` | Client | Record a CvC map in-game (see below) |
-| `/crewinvite`, `/cvcintro`, `/crewbanner`, `/cvcflagtest` | Client | UI and flag previews |
-| `/cvcpos`, `/cvctp`, `/cvcdebug` | Client | Positions, teleport and debug output |
-
 ## Adding a CvC map
 
 ### With the map editor
@@ -83,7 +70,7 @@ Cross-framework: **ESX / QBCore / Qbox**. The framework is detected at runtime (
 2. Click the ground to place **Team A spawn**, then **Team B spawn**.
 3. Type a name and press **Save map**. The map is playable at once, with no restart.
 
-Two spawns are all a map needs: the teams face each other, the center goes to the middle of the spawns, the lobby to the center, and the play area grows to fit every point. To change a point, click its row on the panel and click the ground. Flags and the zone show up when their mode is on.
+For Hold the zone, set **Zone 1**, then **Zone 2** to **Zone 4** appear one by one. Two spawns are all a map needs: the teams face each other, the center goes to the middle of the spawns, the lobby to the center, and the play area grows to fit every point. To change a point, click its row on the panel and click the ground. Flags and the zone show up when their mode is on.
 
 - A click lands on the top surface, so a point under a roof must be added in `Config.CvC.maps`.
 - Maps are stored in `cvc_maps.json` in the resource and override `Config.CvC.maps` entries with the same key. **Reset** on an edited map brings the config version back.
@@ -91,14 +78,9 @@ Two spawns are all a map needs: the teams face each other, the center goes to th
 
 ### In the config
 
-Maps live in `Config.CvC.maps`. Record one in-game with `/cvcmap` (dev commands on):
+Maps live in `Config.CvC.maps`; the comments there list every key. Each map needs `lobbycoords`, `mapcenter`, `radius` and `spawnPoints` (`attacker`, `defender`; `vec4` sets the heading). Optional keys: `flags` (CTF bases), `zone` / `zones`, `modes` (offer the map in these modes only).
 
-1. Stand on each spot and run: `/cvcmap lobby`, `/cvcmap center`, `/cvcmap attacker`, `/cvcmap defender`.
-2. Optional: `/cvcmap flagA`, `/cvcmap flagD` (CTF bases), `/cvcmap zone` (zone centre), `/cvcmap zoneradius 10`.
-3. `/cvcmap name docks B Elysian Docks` — map key, card letter, display name.
-4. `/cvcmap print` — copy the block from F8 into `Config.CvC.maps`.
-
-The play area radius defaults to the farthest point + 20 m. The lobby must sit inside it: players outside the radius are sent back to the lobby. Without `flags` the spawn points are the CTF bases; without `zone` the map centre is used.
+Players who leave the radius are put back where they left it, so every point the round uses must sit inside it. Without `flags` the spawn points are the CTF bases; without `zone` the map centre is used. For more than one zone, replace `zone` with `zones = { { center = vec3(...), radius = 8.0 }, ... }`.
 
 ## Configuration
 
@@ -118,6 +100,7 @@ Everything is in `config.lua`:
 | `Config.Client` | Nametag and blip defaults. `NametagColor` is a HUD colour index (1 white, 12 yellow, 6 red, 18 green, 9 blue, 21 purple, 15 orange, 24 pink). `DistantBlipPollSec` (default 2, 1–60) is how often blips of members out of streaming range move |
 | `Config.AmbulanceCompat` | Ambulance jobs to reset when CvC revives a player |
 | `Config.CvC` | Modes, timings, best-of and team sizes, weapon categories, loadout, maps |
+| `Config.CvC.zone` | `holdTime` to win a round, `respawnTime` after a death, `roundTime` safety limit |
 | `Config.CvC.defaultPlayers` | Players per side preselected on the war setup screen (1 = 1v1) |
 | `Config.CvC.pickTime` | Seconds players stand frozen at spawn picking one primary (classes that are not banned) and one pistol; the pick carries over, a slot left alone gets a random allowed weapon each round. `0` gives `defaultLoadout` instead |
 | `Config.CvC.sounds` | Game sounds for a received crew or war invite and an accepted war invite (`false` = silent) |
