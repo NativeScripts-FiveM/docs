@@ -101,6 +101,7 @@ export default defineConfig({
       { text: '🪧 ns-homelessjob', link: '/scripts/fivem/ns-homelessjob' },
       { text: '⚔️ ns-crew', link: '/scripts/fivem/ns-crew' },
       { text: '🎁 ns-dailyrewards', link: '/scripts/fivem/ns-dailyrewards' },
+      { text: '🎄 ns-christmas', link: '/scripts/fivem/ns-christmas' },
     ],
 
     socialLinks: [
