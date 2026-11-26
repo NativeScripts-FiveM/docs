@@ -103,6 +103,7 @@ export default defineConfig({
       { text: '🎁 ns-dailyrewards', link: '/scripts/fivem/ns-dailyrewards' },
       { text: '🎄 ns-christmas', link: '/scripts/fivem/ns-christmas' },
       { text: '🎬 ns-loadingscreen-v2', link: '/scripts/fivem/ns-loadingscreen-v2' },
+      { text: '🚚 ns-truckerjob', link: '/scripts/fivem/ns-truckerjob' },
     ],
 
     socialLinks: [
